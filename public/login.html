@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GiftLife Unified Login Portal">
+    <title>Login — GiftLife</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e60000 0%, #8b0000 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Background patterns */
+        .bg-pattern {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(rgba(255,255,255,0.1) 2px, transparent 2px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        
+        .floating-drops {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .drop {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50% 50% 50% 5px;
+            transform: rotate(-45deg);
+        }
+        
+        .drop:nth-child(1) { width: 60px; height: 60px; top: 10%; left: 5%; opacity: 0.8; }
+        .drop:nth-child(2) { width: 40px; height: 40px; top: 30%; right: 10%; opacity: 0.5; }
+        .drop:nth-child(3) { width: 80px; height: 80px; bottom: 20%; right: 5%; opacity: 0.4; }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+            z-index: 10;
+        }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 40px 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        .logo-icon {
+            font-size: 48px;
+            line-height: 1;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .brand-name {
+            font-size: 28px;
+            font-weight: 800;
+            color: #111;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-name span {
+            color: #e74c3c;
+        }
+
+        .tagline {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .divider-icon {
+            color: #e74c3c;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .divider-icon::before, .divider-icon::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #eee;
+            margin: 0 15px;
+        }
+
+        .welcome-title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #222;
+            margin-bottom: 8px;
+        }
+
+        .welcome-title span {
+            color: #e74c3c;
+        }
+
+        .welcome-subtitle {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .welcome-subtitle span {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #e74c3c;
+            font-size: 16px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 14px 14px 40px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #333;
+            background: #fafafa;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #e74c3c;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(231, 76, 60, 0.1);
+        }
+
+        .forgot-pass {
+            text-align: right;
+            display: block;
+            font-size: 13px;
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+
+        .forgot-pass:hover {
+            text-decoration: underline;
+        }
+
+        .role-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .role-section-title::before, .role-section-title::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #eee;
+            margin: 0 15px;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .role-card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 16px 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            background: #fff;
+        }
+
+        .role-card:hover {
+            border-color: #ffcccc;
+            background: #fffafa;
+        }
+
+        .role-card.active {
+            border-color: #e74c3c;
+            background: #fffafa;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.1);
+        }
+
+        .role-card-icon {
+            width: 36px;
+            height: 36px;
+            background: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .role-card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #c0392b;
+            margin-bottom: 4px;
+        }
+
+        .role-card-desc {
+            font-size: 10px;
+            color: #777;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        .radio-circle {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .role-card.active .radio-circle {
+            border-color: #e74c3c;
+        }
+
+        .role-card.active .radio-circle::after {
+            content: "";
+            position: absolute;
+            top: 3px; left: 3px; right: 3px; bottom: 3px;
+            background: #e74c3c;
+            border-radius: 50%;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #c0392b, #8e44ad);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(192, 57, 43, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 24px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(192, 57, 43, 0.4);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .or-divider {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 24px;
+        }
+
+        .or-divider::before, .or-divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #eee;
+            margin: 0 15px;
+        }
+
+        .register-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .register-btn {
+            padding: 12px;
+            border: 1px solid #e74c3c;
+            background: transparent;
+            color: #e74c3c;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .register-btn:hover {
+            background: #fffafa;
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.1);
+        }
+
+        .privacy-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .privacy-icon {
+            color: #e74c3c;
+            font-size: 16px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
+            z-index: 10;
+        }
+
+        .footer-heart {
+            font-size: 24px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .login-error {
+            background: #fdeded;
+            color: #e74c3c;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: none;
+            border: 1px solid #fad2d2;
+        }
+
+        @media (max-width: 600px) {
+            .role-grid { grid-template-columns: 1fr; }
+            .login-card { padding: 30px 20px; }
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 32px 24px;
+            width: 90%;
+            max-width: 440px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            position: relative;
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #e74c3c;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 6px;
+            margin-top: 4px;
+        }
+
+        .modal-subtitle {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .modal-error {
+            background: #fdeded;
+            color: #e74c3c;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #fad2d2;
+            margin-bottom: 12px;
+            display: none;
+            text-align: left;
+        }
+
+        .dev-otp-helper {
+            background: #fff9e6;
+            color: #b78103;
+            border: 1px dashed #ffeaa8;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+        
+        .toast-popup {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #333;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 2000;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toast-popup.active {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast-success {
+            background: #2ecc71;
+            border: 1px solid #27ae60;
+        }
+        
+        .toast-error {
+            background: #e74c3c;
+            border: 1px solid #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-pattern"></div>
+    <div class="floating-drops">
+        <div class="drop"></div>
+        <div class="drop"></div>
+        <div class="drop"></div>
+    </div>
+
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="logo-container">
+                <div class="logo-icon">🩸</div>
+                <div class="brand-name">Gift<span>Life</span></div>
+                <div class="tagline">Local Blood Donar Management System with Emergency Alert Mechamism</div>
+            </div>
+
+            <div class="divider-icon">❤️</div>
+
+            <h1 class="welcome-title">Welcome <span>Back!</span></h1>
+            <p class="welcome-subtitle">Login to continue and help <span>save lives.</span></p>
+
+            <div class="login-error" id="loginError"></div>
+
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="phone">Phone Number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input type="text" id="phone" class="form-input" placeholder="Enter your phone number" required>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-wrapper" style="position:relative;">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" class="form-input" placeholder="Enter your password" required>
+                        <button type="button" onclick="togglePassword()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:#999;" id="eyeBtn">👁️</button>
+                    </div>
+                </div>
+
+                 <a href="#" class="forgot-pass" onclick="openForgotModal(event)">Forgot Password?</a>
+
+                <div class="role-section-title">Login as</div>
+                
+                <input type="hidden" id="selectedRole" value="donor">
+                
+                <div class="role-grid">
+                    <div class="role-card" id="role-admin" onclick="selectRole('admin')">
+                        <div class="role-card-icon">🛡️</div>
+                        <div class="role-card-title">Admin / Hospital</div>
+                        <div class="role-card-desc">Manage donors, requests & system</div>
+                        <div class="radio-circle"></div>
+                    </div>
+                    <div class="role-card active" id="role-donor" onclick="selectRole('donor')">
+                        <div class="role-card-icon">🩸</div>
+                        <div class="role-card-title">Donor</div>
+                        <div class="role-card-desc">Donate blood and help save lives</div>
+                        <div class="radio-circle"></div>
+                    </div>
+                    <div class="role-card" id="role-requester" onclick="selectRole('requester')">
+                        <div class="role-card-icon">👥</div>
+                        <div class="role-card-title">Requester</div>
+                        <div class="role-card-desc">Request blood in emergency</div>
+                        <div class="radio-circle"></div>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    ➔ Login
+                </button>
+            </form>
+
+            <div class="or-divider">OR</div>
+
+            <div class="register-grid">
+                <a href="/register" class="register-btn">🩸 Register as Donor</a>
+                <a href="/register-requester" class="register-btn">➕ Register as Requester</a>
+            </div>
+
+            <div class="privacy-badge">
+                <span class="privacy-icon">🛡️</span>
+                <div>
+                    <strong>Your data is safe with us.</strong><br>
+                    We respect your privacy.
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span class="footer-heart">❤️</span><br>
+            <strong>Donate Blood, Save Lives</strong><br>
+            <span style="opacity: 0.8; font-size: 12px;">Be a hero. Be a donor.</span>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal-overlay" id="forgotModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeForgotModal()">&times;</button>
+            
+            <!-- Screen 1: Send OTP -->
+            <div id="forgotScreen1">
+                <div class="logo-icon" style="font-size: 36px; margin-bottom: 8px; display: inline-block;">🔑</div>
+                <h3 class="modal-title">Reset Password</h3>
+                <p class="modal-subtitle">Enter your registered phone number to receive a verification OTP code.</p>
+                
+                <div class="modal-error" id="forgotError1"></div>
+                
+                <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+                    <label class="form-label" for="forgotPhone">Phone Number</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <input type="text" id="forgotPhone" class="form-input" placeholder="e.g. 9999999999">
+                    </div>
+                </div>
+                
+                <button type="button" class="login-btn" onclick="sendResetOtp()" id="sendOtpBtn" style="margin-top: 8px; margin-bottom: 0;">
+                    ➔ Send OTP Code
+                </button>
+            </div>
+            
+            <!-- Screen 2: Verify & Reset -->
+            <div id="forgotScreen2" style="display: none;">
+                <div class="logo-icon" style="font-size: 36px; margin-bottom: 8px; display: inline-block;">📲</div>
+                <h3 class="modal-title">Enter Verification Code</h3>
+                <p class="modal-subtitle">We have simulated sending a 6-digit OTP code to your phone number.</p>
+                
+                <!-- Developer environment helper notice -->
+                <div class="dev-otp-helper" id="devOtpBox">
+                    💡 <strong>Demo Helper:</strong> OTP code generated: <strong id="devOtpCode">------</strong> (printed in server logs too!)
+                </div>
+                
+                <div class="modal-error" id="forgotError2"></div>
+                
+                <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+                    <label class="form-label" for="forgotOtp">Enter 6-Digit OTP</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔑</span>
+                        <input type="text" id="forgotOtp" class="form-input" placeholder="Enter OTP code" maxlength="6">
+                    </div>
+                </div>
+                
+                <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+                    <label class="form-label" for="forgotNewPass">New Password (min. 6 chars)</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="forgotNewPass" class="form-input" placeholder="Create new password">
+                    </div>
+                </div>
+
+                <div class="form-group" style="text-align: left; margin-bottom: 20px;">
+                    <label class="form-label" for="forgotConfirmPass">Confirm New Password</label>
+                    <div class="input-wrapper">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="forgotConfirmPass" class="form-input" placeholder="Confirm new password">
+                    </div>
+                </div>
+                
+                <button type="button" class="login-btn" onclick="submitPasswordReset()" id="resetSubmitBtn" style="margin-top: 8px; margin-bottom: 0;">
+                    ➔ Update Password
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-popup" id="toastBox">
+        <span id="toastIcon"></span>
+        <span id="toastMsg"></span>
+    </div>
+
+    <script>
+        function selectRole(role) {
+            document.querySelectorAll('.role-card').forEach(card => card.classList.remove('active'));
+            document.getElementById(`role-${role}`).classList.add('active');
+            document.getElementById('selectedRole').value = role;
+        }
+
+        // If already logged in, redirect
+        (async () => {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success) {
+                        window.location.href = `/dashboard-${data.user.role}`;
+                    }
+                }
+            } catch (e) {}
+        })();
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('selectedRole').value;
+            const btn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+
+            btn.innerHTML = '⏳ Logging in...';
+            btn.disabled = true;
+            errorDiv.style.display = 'none';
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password, role })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    btn.innerHTML = '✅ Success!';
+                    setTimeout(() => window.location.href = `/dashboard-${data.user.role}`, 600);
+                } else {
+                    errorDiv.textContent = '❌ ' + data.message;
+                    errorDiv.style.display = 'block';
+                    btn.innerHTML = '➔ Login';
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                errorDiv.textContent = '❌ Failed to connect to server.';
+                errorDiv.style.display = 'block';
+                btn.innerHTML = '➔ Login';
+                btn.disabled = false;
+            }
+        }
+        function togglePassword() {
+            const pwd = document.getElementById('password');
+            const btn = document.getElementById('eyeBtn');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                pwd.type = 'password';
+                btn.textContent = '👁️';
+            }
+        }
+
+        // Toast Helper
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toastBox');
+            const icon = document.getElementById('toastIcon');
+            const text = document.getElementById('toastMsg');
+            
+            toast.className = 'toast-popup';
+            if (type === 'success') {
+                toast.classList.add('toast-success');
+                icon.textContent = '✅';
+            } else {
+                toast.classList.add('toast-error');
+                icon.textContent = '❌';
+            }
+            text.textContent = msg;
+            
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
+        // Forgot Modal Control
+        function openForgotModal(e) {
+            if (e) e.preventDefault();
+            
+            // Pre-fill phone if user entered it in main login form
+            const enteredPhone = document.getElementById('phone').value.trim();
+            if (enteredPhone) {
+                document.getElementById('forgotPhone').value = enteredPhone;
+            } else {
+                document.getElementById('forgotPhone').value = '';
+            }
+
+            document.getElementById('forgotError1').style.display = 'none';
+            document.getElementById('forgotError2').style.display = 'none';
+            
+            document.getElementById('forgotScreen1').style.display = 'block';
+            document.getElementById('forgotScreen2').style.display = 'none';
+            
+            const modal = document.getElementById('forgotModal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('active'), 10);
+        }
+
+        function closeForgotModal() {
+            const modal = document.getElementById('forgotModal');
+            modal.classList.remove('active');
+            setTimeout(() => modal.style.display = 'none', 300);
+        }
+
+        async function sendResetOtp() {
+            const phone = document.getElementById('forgotPhone').value.trim();
+            const errorDiv = document.getElementById('forgotError1');
+            const btn = document.getElementById('sendOtpBtn');
+            
+            if (!phone) {
+                errorDiv.textContent = '⚠️ Please enter your registered phone number.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            errorDiv.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Sending OTP...';
+            
+            try {
+                const res = await fetch('/api/auth/forgot-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showToast('OTP code sent successfully!');
+                    
+                    // Show OTP in the dev box
+                    document.getElementById('devOtpCode').textContent = data.devOtp || '------';
+                    
+                    // Switch screen
+                    document.getElementById('forgotScreen1').style.display = 'none';
+                    document.getElementById('forgotScreen2').style.display = 'block';
+                    
+                    // Clear OTP & password fields
+                    document.getElementById('forgotOtp').value = '';
+                    document.getElementById('forgotNewPass').value = '';
+                    document.getElementById('forgotConfirmPass').value = '';
+                } else {
+                    errorDiv.textContent = '❌ ' + data.message;
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errorDiv.textContent = '❌ Connection failed. Check backend.';
+                errorDiv.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '➔ Send OTP Code';
+            }
+        }
+
+        async function submitPasswordReset() {
+            const phone = document.getElementById('forgotPhone').value.trim();
+            const otp = document.getElementById('forgotOtp').value.trim();
+            const newPassword = document.getElementById('forgotNewPass').value;
+            const confirmPass = document.getElementById('forgotConfirmPass').value;
+            const errorDiv = document.getElementById('forgotError2');
+            const btn = document.getElementById('resetSubmitBtn');
+            
+            if (!otp) {
+                errorDiv.textContent = '⚠️ Please enter the 6-digit OTP code.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            if (newPassword.length < 6) {
+                errorDiv.textContent = '⚠️ New password must be at least 6 characters.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            if (newPassword !== confirmPass) {
+                errorDiv.textContent = '⚠️ Passwords do not match.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            errorDiv.style.display = 'none';
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Resetting password...';
+            
+            try {
+                const res = await fetch('/api/auth/reset-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, otp, newPassword })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showToast('Password updated! Please login.', 'success');
+                    closeForgotModal();
+                    // Pre-fill phone in main form for ease
+                    document.getElementById('phone').value = phone;
+                    document.getElementById('password').value = '';
+                } else {
+                    errorDiv.textContent = '❌ ' + data.message;
+                    errorDiv.style.display = 'block';
+                }
+            } catch (err) {
+                errorDiv.textContent = '❌ Reset failed. Check server connection.';
+                errorDiv.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '➔ Update Password';
+            }
+        }
+    </script>
+</body>
+</html>

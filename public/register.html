@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Register as a blood donor on GiftLife. Help save lives in your community.">
+    <title>Register as Donor — GiftLife</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩸</text></svg>">
+    <style>
+        /* Custom layout styles for Register Page */
+        .register-layout-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 32px;
+            margin-top: 40px;
+            align-items: start;
+        }
+
+        .info-column {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 4px 30px rgba(255, 30, 80, 0.05), inset 0 0 20px rgba(255, 50, 100, 0.15);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-lg);
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(255, 100, 130, 0.4), transparent, rgba(255, 30, 80, 0.2));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .info-card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255, 100, 130, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(255, 30, 80, 0.2), inset 0 0 30px rgba(255, 50, 100, 0.25);
+        }
+
+        .info-card:hover::before {
+            opacity: 1;
+        }
+
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .info-card-icon {
+            font-size: 1.5rem;
+            color: var(--primary-light);
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 30, 80, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 30, 80, 0.2);
+        }
+
+        .info-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .info-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .info-list-item {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            font-size: 0.92rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .info-list-item strong {
+            color: #fff;
+        }
+
+        .info-bullet {
+            color: var(--primary-light);
+            font-size: 1.1rem;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        /* Compatibility matrix specific styling */
+        .sidebar-compat-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .sidebar-compat-table th, .sidebar-compat-table td {
+            padding: 10px 8px;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sidebar-compat-table th {
+            color: var(--primary-light);
+            font-weight: 600;
+            background: rgba(255, 30, 80, 0.05);
+        }
+
+        .sidebar-compat-table td {
+            color: var(--text-secondary);
+        }
+
+        .sidebar-compat-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        @media (max-width: 992px) {
+            .register-layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <!-- Navigation (Simplified, Focus Mode) -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <a href="/" class="nav-logo" style="flex-direction: column; align-items: flex-start; gap: 0;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="logo-icon">🩸</span>
+                    <span>Gift<span class="text-gradient">Life</span></span>
+                </div>
+                <span style="font-size: 0.75rem; color: #aaa; margin-left: 36px; margin-top: -4px; font-weight: 500; letter-spacing: 0.5px;">Every donation is second Chance</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/login" class="nav-cta btn-secondary" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 16px;">🔑 Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <span class="section-label">🩸 Become a Donor</span>
+            <h1>Donor <span class="text-gradient">Registration</span></h1>
+            <p>Register as a blood donor in 2 minutes. Your willingness saves lives when every second counts.</p>
+        </div>
+    </div>
+
+    <!-- Main Registration Section -->
+    <section class="form-page">
+        <div class="container" style="max-width: 1200px;">
+            <div class="register-layout-grid">
+                
+                <!-- Left Column: Form Card -->
+                <div class="form-card" style="width: 100%; max-width: 100%; box-sizing: border-box;">
+                    <h2>Personal Information</h2>
+                    <p class="form-desc">Please provide accurate details. This information helps us match you with hospital and emergency requests.</p>
+
+                    <form id="registerForm">
+                        <!-- Name & Age -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="reg-name">Full Name *</label>
+                                <input type="text" class="form-input" id="reg-name" name="name" placeholder="Enter your full name" required minlength="2">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="reg-age">Age *</label>
+                                <input type="number" class="form-input" id="reg-age" name="age" placeholder="e.g. 25" required min="18" max="65">
+                                <span class="form-hint">Must be between 18-65 years</span>
+                            </div>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="form-group">
+                            <label class="form-label">Gender *</label>
+                            <div class="pill-group">
+                                <div class="pill-option">
+                                    <input type="radio" name="gender" id="gender-male" value="Male" required>
+                                    <label for="gender-male">👨 Male</label>
+                                </div>
+                                <div class="pill-option">
+                                    <input type="radio" name="gender" id="gender-female" value="Female">
+                                    <label for="gender-female">👩 Female</label>
+                                </div>
+                                <div class="pill-option">
+                                    <input type="radio" name="gender" id="gender-other" value="Other">
+                                    <label for="gender-other">🧑 Other</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Blood Group & Weight -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="reg-blood">Blood Group *</label>
+                                <select class="form-select" id="reg-blood" name="bloodGroup" required>
+                                    <option value="">Select blood group</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="reg-weight">Weight (kg) *</label>
+                                <input type="number" class="form-input" id="reg-weight" name="weight" placeholder="e.g. 65" min="45" required>
+                                <span class="form-hint">Minimum 45 kg is required to donate</span>
+                            </div>
+                        </div>
+
+                        <div class="form-divider"></div>
+
+                        <!-- City & Phone -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="reg-city">City *</label>
+                                <input type="text" class="form-input" id="reg-city" name="city" placeholder="e.g. Mumbai" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="reg-phone">Phone Number *</label>
+                                <input type="tel" class="form-input" id="reg-phone" name="phone" placeholder="e.g. 9876543210" required>
+                            </div>
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-row">
+                            <div class="form-group" style="grid-column: span 2;">
+                                <label class="form-label" for="reg-password">Password *</label>
+                                <input type="password" class="form-input" id="reg-password" name="password" placeholder="Create a secure password" required minlength="6">
+                            </div>
+                        </div>
+
+                        <div class="form-divider"></div>
+
+                        <!-- Last Donation -->
+                        <div class="form-group">
+                            <label class="form-label" for="reg-lastDonation">Last Donation Date</label>
+                            <input type="date" class="form-input" id="reg-lastDonation" name="lastDonation">
+                            <span class="form-hint">Leave empty if this is your first time donating</span>
+                        </div>
+
+                        <!-- Habits Section -->
+                        <div class="form-group">
+                            <label class="form-label">Habits (Select all that apply)</label>
+                            <div class="pill-group">
+                                <div class="pill-option">
+                                    <input type="checkbox" name="habits" id="habit-drinking" value="Drinking">
+                                    <label for="habit-drinking">🍷 Drinking</label>
+                                </div>
+                                <div class="pill-option">
+                                    <input type="checkbox" name="habits" id="habit-smoking" value="Smoking">
+                                    <label for="habit-smoking">🚬 Smoking</label>
+                                </div>
+                                <div class="pill-option">
+                                    <input type="checkbox" name="habits" id="habit-drugs" value="Drugs">
+                                    <label for="habit-drugs">💊 Drugs</label>
+                                </div>
+                                <div class="pill-option">
+                                    <input type="checkbox" name="habits" id="habit-other" value="Other">
+                                    <label for="habit-other">Others</label>
+                                </div>
+                                <div class="pill-option">
+                                    <input type="checkbox" name="habits" id="habit-none" value="None">
+                                    <label for="habit-none">✅ None of these</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medical Conditions -->
+                        <div class="form-group">
+                            <label class="form-label" for="reg-medical">Medical Conditions</label>
+                            <textarea class="form-input form-textarea" id="reg-medical" name="medicalConditions" placeholder="List any medical conditions, allergies, or chronic illnesses. Write 'None' if not applicable." rows="3"></textarea>
+                        </div>
+
+                        <!-- Submit -->
+                        <button type="submit" class="btn btn-primary btn-lg" id="registerBtn" style="width: 100%; margin-top: 8px;">
+                            🩸 Register as Blood Donor
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right Column: Educational Sidebar Info Column -->
+                <div class="info-column">
+                    
+                    <!-- Sidebar Card 1: How Registering Helps -->
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <div class="info-card-icon"><i class="fa-solid fa-lightbulb"></i></div>
+                            <h3 class="info-card-title">How Registering as a Donor Helps</h3>
+                        </div>
+                        <div class="info-list">
+                            <div class="info-list-item">
+                                <span class="info-bullet">💻</span>
+                                <div>
+                                    <strong>Indexed in Live Directory:</strong> Your profile is instantly added to our secure searchable directory. Hospitals and approved local requesters can match with you instantly in emergencies.
+                                </div>
+                            </div>
+                            <div class="info-list-item">
+                                <span class="info-bullet">⚡</span>
+                                <div>
+                                    <strong>Real-time Alert Broadcast:</strong> When a request matching your blood group is registered in your city, you will receive an instant notification to accept or decline.
+                                </div>
+                            </div>
+                            <div class="info-list-item">
+                                <span class="info-bullet">🛡️</span>
+                                <div>
+                                    <strong>Privacy-First Safe Connection:</strong> Your telephone number is kept entirely confidential and only displayed to verified hospital administrators or requesters if you accept their request.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Card 2: Donor Usefulness & Necessity -->
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <div class="info-card-icon"><i class="fa-solid fa-handshake-angle"></i></div>
+                            <h3 class="info-card-title">How Blood Donors Are Useful</h3>
+                        </div>
+                        <div class="info-list">
+                            <div class="info-list-item">
+                                <span class="info-bullet">❤️</span>
+                                <div>
+                                    <strong>1 Donation = 3 Lives Saved:</strong> A single standard donation (approx. 350-450ml) is separated into red blood cells, plasma, and platelets, which can be given to three different patients.
+                                </div>
+                            </div>
+                            <div class="info-list-item">
+                                <span class="info-bullet">🔬</span>
+                                <div>
+                                    <strong>No Artificial Replacement:</strong> Human blood cannot be manufactured or synthetically synthesized in a lab. Patient care depends entirely on the goodwill of donors like you.
+                                </div>
+                            </div>
+                            <div class="info-list-item">
+                                <span class="info-bullet">⏱️</span>
+                                <div>
+                                    <strong>Constant Critical Demand:</strong> Every 2 seconds, someone in India / globally needs a blood transfusion for major surgeries, cancer therapies, childbirth, or trauma.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Card 3: Health Rules & Cooldown -->
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <div class="info-card-icon"><i class="fa-solid fa-user-doctor"></i></div>
+                            <h3 class="info-card-title">Donor Health & Eligibility Rules</h3>
+                        </div>
+                        <div class="info-list">
+                            <div class="info-list-item">
+                                <span class="info-bullet">⚖️</span>
+                                <div>
+                                    <strong>Body Weight:</strong> Must weigh at least <strong>45 kg</strong> to ensure a safe extraction volume without side effects.
+                                </div>
+                            </div>
+                            <div class="info-list-item">
+                                <span class="info-bullet">🎂</span>
+                                <div>
+                                    <strong>Age Bracket:</strong> Must be between <strong>18 and 65 years</strong> old to register.
+                                </div>
+                            </div>
+                            <div class="info-list-item">
+                                <span class="info-bullet">⏱️</span>
+                                <div>
+                                    <strong>3-Month Gap Cooldown:</strong> You must wait at least <strong>90 days</strong> between whole blood donations to ensure your body fully restores iron reserves.
+                                </div>
+                            </div>
+                            <div class="info-list-item">
+                                <span class="info-bullet">🩺</span>
+                                <div>
+                                    <strong>General Health:</strong> Must be in good overall health, free from infectious diseases, and not under strong chronic medications.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sidebar Card 4: Transfusion Compatibility Matrix -->
+                    <div class="info-card">
+                        <div class="info-card-header">
+                            <div class="info-card-icon"><i class="fa-solid fa-shuffle"></i></div>
+                            <h3 class="info-card-title">Blood Group Compatibility Matrix</h3>
+                        </div>
+                        <p class="card-text" style="font-size: 0.85rem; margin-bottom: 12px; line-height: 1.4;">Find which groups you can safely give blood to or receive from:</p>
+                        <table class="sidebar-compat-table">
+                            <thead>
+                                <tr>
+                                    <th>Blood Group</th>
+                                    <th>Can Give To</th>
+                                    <th>Can Receive From</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>O-</strong></td>
+                                    <td><span style="color: var(--accent-green);">Universal Donor</span> (All)</td>
+                                    <td>O-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>O+</strong></td>
+                                    <td>O+, A+, B+, AB+</td>
+                                    <td>O-, O+</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>A-</strong></td>
+                                    <td>A-, A+, AB-, AB+</td>
+                                    <td>O-, A-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>A+</strong></td>
+                                    <td>A+, AB+</td>
+                                    <td>O-, O+, A-, A+</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>B-</strong></td>
+                                    <td>B-, B+, AB-, AB+</td>
+                                    <td>O-, B-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>B+</strong></td>
+                                    <td>B+, AB+</td>
+                                    <td>O-, O+, B-, B+</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>AB-</strong></td>
+                                    <td>AB-, AB+</td>
+                                    <td>O-, A-, B-, AB-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>AB+</strong></td>
+                                    <td>AB+</td>
+                                    <td><span style="color: var(--accent-green);">Universal Recipient</span> (All)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <span>© 2026 GiftLife. Major Project — All rights reserved.</span>
+                <span>Built with ❤️ for saving lives</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('registerBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="loader"><span></span><span></span><span></span></span> Registering...';
+            btn.disabled = true;
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            data.habits = formData.getAll('habits');
+
+            // Convert age and weight to numbers
+            if (data.age) data.age = parseInt(data.age);
+            if (data.weight) data.weight = parseInt(data.weight);
+            if (!data.lastDonation) delete data.lastDonation;
+            if (!data.weight) delete data.weight;
+
+            try {
+                const res = await fetch('/api/donors/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    showToast('🎉 Registration successful! Thank you for becoming a donor.', 'success');
+                    e.target.reset();
+                    
+                    // Show success animation
+                    btn.innerHTML = '✅ Registered Successfully!';
+                    btn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                showToast('❌ Network error. Please try again.', 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

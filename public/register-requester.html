@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Register as a blood requester on GiftLife. Request blood and alert nearby donors instantly.">
+    <title>Requester Registration — GiftLife</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚨</text></svg>">
+    <style>
+        /* Orange/Crimson Theme Overrides for Requester focus */
+        .text-gradient {
+            background: linear-gradient(135deg, #e67e22, #e74c3c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .register-container {
+            max-width: 550px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .premium-form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 15px 50px rgba(230, 126, 34, 0.05), inset 0 0 30px rgba(230, 126, 34, 0.1);
+            transition: all var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+            border-top: 4px solid #e67e22;
+        }
+
+        .premium-form-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-lg);
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(230, 126, 34, 0.4), transparent, rgba(231, 76, 60, 0.2));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .premium-form-card:hover {
+            border-color: rgba(230, 126, 34, 0.5);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 60px rgba(230, 126, 34, 0.15), inset 0 0 40px rgba(230, 126, 34, 0.2);
+        }
+
+        .card-header-icon {
+            font-size: 2.5rem;
+            color: #e67e22;
+            width: 70px;
+            height: 70px;
+            background: rgba(230, 126, 34, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(230, 126, 34, 0.2);
+            margin: 0 auto 20px auto;
+        }
+
+        .form-title {
+            text-align: center;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .form-subtitle {
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .premium-btn {
+            background: linear-gradient(135deg, #e67e22, #e74c3c);
+            color: #fff;
+            font-weight: 700;
+            box-shadow: 0 8px 30px rgba(230, 126, 34, 0.3);
+            border: none;
+            width: 100%;
+            cursor: pointer;
+            padding: 14px;
+            border-radius: 100px;
+            font-size: 1rem;
+            transition: all var(--transition-normal);
+            margin-top: 10px;
+        }
+
+        .premium-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(230, 126, 34, 0.5);
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .form-link-container {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .form-link-container a {
+            color: #e67e22;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .form-link-container a:hover {
+            color: #f39c12;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <!-- Navigation (Simplified, Focus Mode) -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <a href="/" class="nav-logo" style="flex-direction: column; align-items: flex-start; gap: 0;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="logo-icon">🩸</span>
+                    <span>Gift<span class="text-gradient">Life</span></span>
+                </div>
+                <span style="font-size: 0.75rem; color: #aaa; margin-left: 36px; margin-top: -4px; font-weight: 500; letter-spacing: 0.5px;">Every donation is second Chance</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/login" class="nav-cta btn-secondary" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 16px;">🔑 Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header" style="padding-bottom: 10px;">
+        <div class="container">
+            <span class="section-label" style="color: #e67e22; background: rgba(230, 126, 34, 0.1);">🚨 Need Blood?</span>
+            <h1>Register as a <span class="text-gradient">Requester</span></h1>
+            <p>Create an account to submit emergency requests and connect with donors instantly.</p>
+        </div>
+    </div>
+
+    <!-- Main Registration Section -->
+    <div class="register-container">
+        <div class="premium-form-card">
+            <div class="card-header-icon">
+                <i class="fa-solid fa-users-rectangle"></i>
+            </div>
+            
+            <h2 class="form-title">Requester Account</h2>
+            <p class="form-subtitle">Register to request blood for patients and coordinate donations in real-time.</p>
+
+            <form id="registerForm">
+                <!-- Full Name -->
+                <div class="form-group">
+                    <label class="form-label" for="reg-name">Full Name *</label>
+                    <input type="text" class="form-input" id="reg-name" placeholder="Enter your full name" required minlength="2">
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label class="form-label" for="reg-phone">Phone Number *</label>
+                    <input type="tel" class="form-input" id="reg-phone" placeholder="e.g. 9876543210" required pattern="[0-9]{10}">
+                    <span class="form-hint">10-digit mobile number</span>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label class="form-label" for="reg-password">Password *</label>
+                    <input type="password" class="form-input" id="reg-password" placeholder="Create a secure password" required minlength="6">
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="premium-btn">
+                    ✨ Create Requester Account
+                </button>
+
+                <!-- Alternate Navigation Links -->
+                <div class="form-link-container">
+                    Already have a requester account? <a href="/login">🔑 Login Here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <span>© 2026 GiftLife. Major Project — All rights reserved.</span>
+                <span>Built with ❤️ for saving lives</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="loader"><span></span><span></span><span></span></span>';
+            btn.disabled = true;
+
+            const name = document.getElementById('reg-name').value;
+            const phone = document.getElementById('reg-phone').value;
+            const password = document.getElementById('reg-password').value;
+
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, password, role: 'requester' })
+                });
+
+                const data = await res.json();
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+
+                if (data.success) {
+                    showToast('🎉 Requester registered successfully! Redirecting to login...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2000);
+                } else {
+                    showToast('❌ ' + data.message, 'error');
+                }
+            } catch (err) {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                showToast('❌ Registration failed. Please try again.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

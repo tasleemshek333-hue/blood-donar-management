@@ -1,0 +1,16 @@
+node_modules/
+database_data/
+local-mongo-db/
+npm-debug.log
+.git
+.gitignore
+.env
+CVS
+.svn
+.hg
+.lock-wscript
+.DS_Store
+*.md
+scratch/
+.system_generated/
+*.log

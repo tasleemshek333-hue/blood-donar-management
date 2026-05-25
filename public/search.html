@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Search for blood donors near you by blood group and city on BloodLink.">
+    <title>Find Blood Donors — BloodLink</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩸</text></svg>">
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <a href="/" class="nav-logo" style="flex-direction: column; align-items: flex-start; gap: 0;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="logo-icon">🩸</span>
+                    <span>Gift<span class="text-gradient">Life</span></span>
+                </div>
+                <span style="font-size: 0.75rem; color: #aaa; margin-left: 36px; margin-top: -4px; font-weight: 500; letter-spacing: 0.5px;">Every donation is second Chance</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/search" class="active">Find Donors</a>
+                <a href="/emergency">Emergency</a>
+                <a href="/login" class="nav-cta btn-secondary" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 16px; margin-right: 8px;">🔑 Login</a>
+                <a href="/register" class="nav-cta">Register as Donor</a>
+            </div>
+            <div class="nav-toggle" id="navToggle" onclick="toggleNav()">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <span class="section-label">🔍 Donor Search</span>
+            <h1>Find <span class="text-gradient">Blood Donors</span></h1>
+            <p>Search for available blood donors by blood group and city.</p>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <section class="form-page">
+        <div class="container" style="max-width: 960px;">
+            <!-- Search Filters -->
+            <div class="search-filters">
+                <select class="form-select" id="searchBlood">
+                    <option value="all">All Blood Groups</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                </select>
+                <input type="text" class="form-input" id="searchCity" placeholder="🏙️ Enter city name...">
+                <button class="btn btn-primary" id="searchBtn" onclick="searchDonors()">
+                    🔍 Search
+                </button>
+            </div>
+
+            <!-- Results Header -->
+            <div class="search-results-header" id="resultsHeader" style="display: none;">
+                <h3 id="resultsTitle">Search Results</h3>
+                <span id="resultsCount"></span>
+            </div>
+
+            <!-- Results Grid -->
+            <div class="donor-grid" id="donorGrid"></div>
+
+            <!-- No Results -->
+            <div class="no-results" id="noResults" style="display: none;">
+                <div class="no-results-icon">🔍</div>
+                <h3>No Donors Found</h3>
+                <p>Try adjusting your search filters or search in a different city.</p>
+                <a href="/register" class="btn btn-primary" style="margin-top: 20px;">🩸 Register as a Donor</a>
+            </div>
+
+            <!-- Initial State -->
+            <div class="no-results" id="initialState">
+                <div class="no-results-icon">🩸</div>
+                <h3>Search for Blood Donors</h3>
+                <p>Select a blood group and/or enter a city to find available donors near you.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <span>© 2026 BloodLink. Major Project — All rights reserved.</span>
+                <span>Built with ❤️ for saving lives</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Check URL params for pre-filled search
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('bloodGroup')) {
+            document.getElementById('searchBlood').value = urlParams.get('bloodGroup');
+            searchDonors();
+        }
+
+        // Allow Enter key to search
+        document.getElementById('searchCity').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') searchDonors();
+        });
+
+        async function searchDonors() {
+            const bloodGroup = document.getElementById('searchBlood').value;
+            const city = document.getElementById('searchCity').value.trim();
+            const grid = document.getElementById('donorGrid');
+            const noResults = document.getElementById('noResults');
+            const initial = document.getElementById('initialState');
+            const header = document.getElementById('resultsHeader');
+
+            initial.style.display = 'none';
+
+            const btn = document.getElementById('searchBtn');
+            btn.innerHTML = '<span class="loader"><span></span><span></span><span></span></span>';
+            btn.disabled = true;
+
+            try {
+                let url = '/api/donors/search?';
+                if (bloodGroup !== 'all') url += `bloodGroup=${encodeURIComponent(bloodGroup)}&`;
+                if (city) url += `city=${encodeURIComponent(city)}`;
+
+                const res = await fetch(url);
+                const data = await res.json();
+
+                btn.innerHTML = '🔍 Search';
+                btn.disabled = false;
+
+                if (data.success && data.donors.length > 0) {
+                    header.style.display = 'flex';
+                    noResults.style.display = 'none';
+                    document.getElementById('resultsTitle').textContent = 'Available Donors';
+                    document.getElementById('resultsCount').textContent = `${data.count} donor${data.count !== 1 ? 's' : ''} found`;
+
+                    grid.innerHTML = data.donors.map(donor => `
+                        <div class="donor-card">
+                            <div class="donor-card-header">
+                                <div class="donor-avatar">${donor.name.charAt(0).toUpperCase()}</div>
+                                <div>
+                                    <div class="donor-name">${donor.name}</div>
+                                    <div class="donor-location">📍 ${donor.city}</div>
+                                </div>
+                                <div class="donor-blood-badge">${donor.bloodGroup}</div>
+                            </div>
+                            <div class="donor-details">
+                                <div class="donor-detail">
+                                    <div class="donor-detail-label">Age</div>
+                                    <div class="donor-detail-value">${donor.age} years</div>
+                                </div>
+                                <div class="donor-detail">
+                                    <div class="donor-detail-label">Gender</div>
+                                    <div class="donor-detail-value">${donor.gender || 'N/A'}</div>
+                                </div>
+                                <div class="donor-detail">
+                                    <div class="donor-detail-label">Phone</div>
+                                    <div class="donor-detail-value">${donor.phone}</div>
+                                </div>
+                                <div class="donor-detail">
+                                    <div class="donor-detail-label">Donations</div>
+                                    <div class="donor-detail-value">${donor.donationCount || 0} times</div>
+                                </div>
+                                <div class="donor-detail">
+                                    <div class="donor-detail-label">Habits</div>
+                                    <div class="donor-detail-value" style="font-size: 0.8rem;">${donor.habits && donor.habits.length > 0 ? donor.habits.join(', ') : 'None'}</div>
+                                </div>
+                                ${donor.medicalConditions && donor.medicalConditions.toLowerCase() !== 'none' && donor.medicalConditions.trim() !== '' ? `
+                                <div class="donor-detail" style="width: 100%; margin-top: 4px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.05);">
+                                    <div class="donor-detail-label" style="color: #e74c3c;">⚕️ Medical History</div>
+                                    <div class="donor-detail-value" style="font-size: 0.85rem; line-height: 1.4;">${donor.medicalConditions}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <div class="donor-card-actions" style="flex-wrap: wrap; gap: 8px;">
+                                <button id="btn-call-${donor._id}" class="btn btn-primary btn-sm" style="flex:1; min-width: 100px; padding: 8px 12px; background: rgba(52, 152, 219, 0.1); border-color: rgba(52, 152, 219, 0.4); color: #3498db;" onclick="sendAutoCall('${donor._id}', '${donor.phone}')">
+                                    📞 Call Donor
+                                </button>
+                                <button id="btn-alert-${donor._id}" class="btn btn-secondary btn-sm" style="flex:1; min-width: 100px; padding: 8px 12px; background: rgba(37, 211, 102, 0.1); border-color: rgba(37, 211, 102, 0.4); color: #25D366;" onclick="sendDirectAlert('${donor._id}', '${donor.bloodGroup}', '${donor.phone}')">
+                                    💬 SMS Auto-Alert
+                                </button>
+                                <button id="btn-email-${donor._id}" class="btn btn-secondary btn-sm" style="flex:1; min-width: 100px; padding: 8px 12px; background: rgba(231, 76, 60, 0.1); border-color: rgba(231, 76, 60, 0.4); color: #e74c3c;" onclick="sendEmailAlert('${donor._id}', '${donor.bloodGroup}', '${donor.email || ''}')">
+                                    📧 Email
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    header.style.display = 'none';
+                    grid.innerHTML = '';
+                    noResults.style.display = 'block';
+                }
+            } catch (err) {
+                btn.innerHTML = '🔍 Search';
+                btn.disabled = false;
+                showToast('❌ Search failed. Please try again.', 'error');
+            }
+        }
+
+        async function sendDirectAlert(donorId, bloodGroup, phone) {
+            const btn = document.getElementById(`btn-alert-${donorId}`);
+            const ogText = btn.innerHTML;
+            btn.innerHTML = '💬 Opening...';
+            
+            const message = `Hi, we have an urgent requirement for ${bloodGroup} blood at BloodLink! Are you available to donate?`;
+            
+            // Redirect to native SMS app
+            setTimeout(() => {
+                const encodedMessage = encodeURIComponent(message);
+                window.location.href = `sms:${phone}?body=${encodedMessage}`;
+                
+                showToast('💬 Opening messaging app...', 'success');
+                btn.innerHTML = '✓ Sent';
+                btn.style.background = '#2ecc71';
+                btn.style.borderColor = '#2ecc71';
+                btn.style.color = '#fff';
+                btn.disabled = true;
+            }, 500);
+
+            // Also log the alert to backend
+            fetch(`/api/donors/${donorId}/message`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ 
+                    messageType: 'WhatsApp/SMS alert',
+                    customMessage: message
+                })
+            }).catch(() => {});
+        }
+
+        async function sendAutoCall(donorId, phone) {
+            const btn = document.getElementById(`btn-call-${donorId}`);
+            const ogText = btn.innerHTML;
+            btn.innerHTML = '📞 Connecting...';
+            
+            // Redirect to real-time phone dialer link
+            setTimeout(() => {
+                window.location.href = `tel:${phone}`;
+                showToast('📞 Opening phone dialer...', 'success');
+                btn.innerHTML = '✓ Calling...';
+                btn.style.background = '#3498db';
+                btn.style.borderColor = '#3498db';
+                btn.style.color = '#fff';
+                btn.disabled = true;
+            }, 500);
+
+            // Also send log block request to backend (optional, ignoring fetch errors)
+            fetch(`/api/donors/${donorId}/call`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'}
+            }).catch(() => {});
+        }
+
+        function sendEmailAlert(donorId, bloodGroup, email) {
+            if (!email || email === 'undefined') {
+                showToast('❌ This donor did not provide an email address.', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById(`btn-email-${donorId}`);
+            btn.innerHTML = '📧 Opening...';
+            
+            const subject = encodeURIComponent('URGENT: Blood Request from BloodLink');
+            const message = encodeURIComponent(`Hi, we have an urgent requirement for ${bloodGroup} blood at BloodLink! Are you available to donate?`);
+            
+            setTimeout(() => {
+                // native email handler
+                window.location.href = `mailto:${email}?subject=${subject}&body=${message}`;
+                
+                showToast('📧 Opening email client...', 'success');
+                btn.innerHTML = '✓ Sent';
+                btn.style.background = '#e74c3c';
+                btn.style.borderColor = '#e74c3c';
+                btn.style.color = '#fff';
+                btn.disabled = true;
+            }, 500);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+node_modules/
+database_data/
+local-mongo-db/
+.env
+.env.local
+*.log
+.DS_Store
+
+# Exclude duplicate nested system folder
+Local Blood Donar Management System with Emergency Alert Mechamism/
+
+# Exclude temporary scratch files
+scratch*.js
+temp.js
+fix_index.js

@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BloodLink - Local Blood Donor Finder & Emergency Alert System. Find blood donors near you instantly.">
+    <title>BloodLink — Save Lives, Donate Blood</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩸</text></svg>">
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="/" class="nav-logo" style="flex-direction: column; align-items: flex-start; gap: 0;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <img src="/img/logo.png" alt="Donate Blood Logo" class="logo-icon" style="height: 48px; width: auto; object-fit: contain;">
+                    <span>Gift<span class="text-gradient">Life</span></span>
+                </div>
+                <span style="font-size: 0.75rem; color: #aaa; margin-left: 56px; margin-top: -8px; font-weight: 500; letter-spacing: 0.5px;">Every donation is second Chance</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/search">Find Donors</a>
+                <a href="/emergency">Emergency</a>
+                <a href="/login" class="nav-cta btn-secondary" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 16px; margin-right: 8px;">🔑 Login</a>
+                <a href="/register" class="nav-cta">Register as Donor</a>
+            </div>
+            <div class="nav-toggle" id="navToggle" onclick="toggleNav()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container" style="position: relative;">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="pulse-dot"></span>
+                    Platform Active — Saving Lives 24/7
+                </div>
+                <h1 class="hero-title">
+                    Every tomorrow needs a <br><span class="text-gradient">blood donor</span> today
+                </h1>
+                <p class="hero-subtitle">
+                    Connect with local blood donors instantly. Our platform bridges the gap between those in need 
+                    and generous donors, making blood donation accessible and efficient.
+                </p>
+                <div class="hero-actions">
+                    <a href="/register" class="btn btn-primary btn-lg">
+                        🩸 Become a Donor
+                    </a>
+                    <a href="/search" class="btn btn-secondary btn-lg">
+                        🔍 Find Donors
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div>
+                        <div class="hero-stat-value text-gradient" id="statDonors">0+</div>
+                        <div class="hero-stat-label">Registered Donors</div>
+                    </div>
+                    <div>
+                        <div class="hero-stat-value text-gradient" id="statCities">0+</div>
+                        <div class="hero-stat-label">Cities Covered</div>
+                    </div>
+                    <div>
+                        <div class="hero-stat-value text-gradient" id="statLives">12+</div>
+                        <div class="hero-stat-label">Lives Saved</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Hero Visual -->
+            <div class="hero-visual" style="display: flex; justify-content: center; align-items: center;">
+                <img src="/img/hero_logo.png" alt="Blood Donation Emblem" style="max-width: 100%; height: auto; max-height: 420px; object-fit: contain; filter: drop-shadow(0 0 30px rgba(231, 76, 60, 0.4)); animation: float 6s ease-in-out infinite;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item reveal">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Blood Groups Supported</div>
+                </div>
+                <div class="stat-item reveal">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Emergency Alerts</div>
+                </div>
+                <div class="stat-item reveal">
+                    <div class="stat-number">Instant</div>
+                    <div class="stat-label">Donor Matching</div>
+                </div>
+                <div class="stat-item reveal">
+                    <div class="stat-number">Free</div>
+                    <div class="stat-label">For Everyone</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-label">✨ Features</span>
+                <h2 class="section-title">Everything You Need to <span class="text-gradient">Save Lives</span></h2>
+                <p class="section-subtitle mx-auto">A comprehensive platform designed to make blood donation simple, fast, and accessible for everyone.</p>
+            </div>
+            <div class="features-grid">
+                <div class="card reveal">
+                    <div class="card-icon">🔍</div>
+                    <h3 class="card-title">Smart Donor Search</h3>
+                    <p class="card-text">Search for blood donors by blood group and city. Find compatible donors near you within seconds.</p>
+                </div>
+                <div class="card reveal">
+                    <div class="card-icon">🚨</div>
+                    <h3 class="card-title">Emergency Alerts</h3>
+                    <p class="card-text">Send instant emergency blood requests. All matching donors in your area are notified immediately.</p>
+                </div>
+                <div class="card reveal">
+                    <div class="card-icon">📋</div>
+                    <h3 class="card-title">Easy Registration</h3>
+                    <p class="card-text">Register as a blood donor in under 2 minutes. Your information helps save lives in your community.</p>
+                </div>
+                <div class="card reveal">
+                    <div class="card-icon">📊</div>
+                    <h3 class="card-title">Live Dashboard</h3>
+                    <p class="card-text">Real-time analytics and donor management. Track donations, availability, and blood group distribution.</p>
+                </div>
+                <div class="card reveal">
+                    <div class="card-icon">🩸</div>
+                    <h3 class="card-title">Blood Compatibility</h3>
+                    <p class="card-text">Built-in blood compatibility chart. Instantly see which blood types are compatible for safe transfusion.</p>
+                </div>
+                <div class="card reveal">
+                    <div class="card-icon">🔒</div>
+                    <h3 class="card-title">Privacy & Security</h3>
+                    <p class="card-text">Your data is protected. Donor information is only shared with verified requesters during emergencies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-label">📌 How Donation Works</span>
+                <h2 class="section-title">How <span class="text-gradient">Donation</span> Works</h2>
+                <p class="section-subtitle mx-auto">Register, get a quick health check, and donate — a simple process to help save lives.</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item reveal">
+                    <div class="timeline-icon">📋</div>
+                    <div class="timeline-connector"></div>
+                    <h3>Registration Process</h3>
+                    <p>Sign up and schedule your first appointment with ease</p>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-icon">🩺</div>
+                    <div class="timeline-connector"></div>
+                    <h3>Health Screening</h3>
+                    <p>A simple check-up to ensure you're ready to donate</p>
+                </div>
+                <div class="timeline-item reveal">
+                    <div class="timeline-icon">🩸</div>
+                    <h3>Donation Day</h3>
+                    <p>Relax as our professional staff guide you through a safe donation process</p>
+                </div>
+            </div>
+
+            <!-- Eligibility Quiz Section -->
+            <div class="quiz-widget-card reveal card" style="max-width: 650px; margin: 60px auto 0 auto; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 10;">
+                <div id="quiz-start-view" class="text-center" style="width: 100%;">
+                    <div class="card-icon mx-auto" style="display: flex; align-items: center; justify-content: center; font-size: 1.8rem; height: 60px; width: 60px; margin-bottom: 15px;">🩺</div>
+                    <h3 class="card-title" style="font-size: 1.4rem; margin-top: 10px;">Check Your Donation Eligibility</h3>
+                    <p class="card-text" style="margin-bottom: 25px; color: var(--text-secondary);">Most healthy individuals can save lives! Conduct a quick 30-second health check before registering as a donor.</p>
+                    <button class="btn btn-primary btn-lg" onclick="startEligibilityQuiz()">
+                        <span class="pulse-dot" style="background-color: var(--accent-green);"></span> Start Eligibility Check
+                    </button>
+                </div>
+
+                <!-- Quiz Active View -->
+                <div id="quiz-active-view" class="hidden" style="width: 100%;">
+                    <div class="quiz-progress-bar" style="width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; margin-bottom: 20px; overflow: hidden;">
+                        <div class="quiz-progress" id="quiz-progress-indicator" style="width: 20%; height: 100%; background: var(--gradient-primary); transition: width 0.3s ease;"></div>
+                    </div>
+                    <div class="quiz-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <span id="quiz-step-title" style="font-weight: 600; font-size: 0.9rem; color: var(--text-secondary);">Question 1 of 5</span>
+                        <span onclick="cancelQuiz()" style="cursor: pointer; font-size: 1.2rem; color: var(--text-muted);">✕</span>
+                    </div>
+                    <div class="quiz-question-container text-center" style="min-height: 80px; display: flex; align-items: center; justify-content: center; margin-bottom: 30px;">
+                        <h4 id="quiz-question-text" style="font-size: 1.15rem; font-weight: 600; line-height: 1.4; font-family: 'Outfit', sans-serif;">Are you currently feeling well, active, and free from any fever or cold symptoms?</h4>
+                    </div>
+                    <div class="quiz-answers-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <button class="btn btn-secondary" onclick="handleQuizAnswer(true)">Yes, I am</button>
+                        <button class="btn btn-secondary" onclick="handleQuizAnswer(false)">No</button>
+                    </div>
+                </div>
+
+                <!-- Quiz Result View -->
+                <div id="quiz-result-view" class="hidden" style="width: 100%;">
+                    <!-- Loaded dynamically via JS -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blood Compatibility Chart -->
+    <section class="section compatibility-section" id="compatibility">
+        <div class="container">
+            <div class="text-center">
+                <span class="section-label">🩸 Blood Types</span>
+                <h2 class="section-title">Blood <span class="text-gradient">Reserves & Compatibility</span></h2>
+                <p class="section-subtitle mx-auto">Real-time network reserves and blood compatibility matrices for safe transfusions.</p>
+            </div>
+
+            <!-- Live reserves visualizer -->
+            <div class="reserves-visualizer-container reveal" style="margin: 40px auto 60px auto; max-width: 1000px;">
+                <div class="text-center" style="margin-bottom: 30px;">
+                    <h3 class="card-title" style="font-size: 1.4rem; color: var(--text-primary); display: inline-flex; align-items: center; gap: 8px;">
+                        <i class="fa-solid fa-flask" style="color: var(--primary);"></i> Live Network Blood Reserves
+                    </h3>
+                    <p class="card-text" style="font-size: 0.9rem; color: var(--text-secondary); max-width: 500px; margin: 5px auto 0 auto;">
+                        Dynamic capacity levels calculated directly from live donors in our database. Red alerts indicate critical shortage.
+                    </p>
+                </div>
+                <div class="flasks-grid" id="flasks-grid-homepage">
+                    <!-- Rendered dynamically by JavaScript -->
+                </div>
+            </div>
+
+            <div class="text-center" style="margin-bottom: 30px; margin-top: 20px;">
+                <h3 class="card-title" style="font-size: 1.4rem; color: var(--text-primary); display: inline-flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-shuffle" style="color: var(--primary);"></i> Transfusion Compatibility Matrix
+                </h3>
+            </div>
+            <div class="compat-table-wrapper reveal">
+                <table class="compat-table">
+                    <thead>
+                        <tr>
+                            <th>Donor → <br>Recipient ↓</th>
+                            <th>O-</th>
+                            <th>O+</th>
+                            <th>A-</th>
+                            <th>A+</th>
+                            <th>B-</th>
+                            <th>B+</th>
+                            <th>AB-</th>
+                            <th>AB+</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>O-</td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                        </tr>
+                        <tr>
+                            <td>O+</td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                        </tr>
+                        <tr>
+                            <td>A-</td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                        </tr>
+                        <tr>
+                            <td>A+</td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                        </tr>
+                        <tr>
+                            <td>B-</td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                        </tr>
+                        <tr>
+                            <td>B+</td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                        </tr>
+                        <tr>
+                            <td>AB-</td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-cross">—</span></td>
+                        </tr>
+                        <tr>
+                            <td>AB+</td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                            <td><span class="compat-check">✓</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section cta-section">
+        <div class="container">
+            <div class="cta-card reveal">
+                <h2>Ready to Make a <span class="text-gradient">Difference?</span></h2>
+                <p>Join thousands of donors who are saving lives every day. Register now and become a hero in your community.</p>
+                <div style="display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;">
+                    <a href="/register" class="btn btn-primary btn-lg">🩸 Register Now</a>
+                    <a href="/emergency" class="btn btn-outline btn-lg">🚨 Emergency Request</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="nav-logo">
+                        <img src="/img/logo.png" alt="Donate Blood Logo" class="logo-icon" style="height: 40px; width: auto; object-fit: contain;">
+                        <span>Blood<span class="text-gradient">Link</span></span>
+                    </div>
+                    <p>A community-driven platform connecting blood donors with those in need. Every donation counts towards saving precious lives.</p>
+                </div>
+                <div>
+                    <h4>Quick Links</h4>
+                    <div class="footer-links">
+                        <a href="/">Home</a>
+                        <a href="/register">Register</a>
+                        <a href="/search">Find Donors</a>
+                        <a href="/emergency">Emergency</a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Resources</h4>
+                    <div class="footer-links">
+                        <a href="#compatibility">Blood Compatibility</a>
+                        <a href="/dashboard">Dashboard</a>
+                        <a href="#features">Features</a>
+                    </div>
+                </div>
+                <div>
+                    <h4>Blood Groups</h4>
+                    <div class="footer-links">
+                        <a href="/search?bloodGroup=A%2B">A+ Donors</a>
+                        <a href="/search?bloodGroup=B%2B">B+ Donors</a>
+                        <a href="/search?bloodGroup=O%2B">O+ Donors</a>
+                        <a href="/search?bloodGroup=AB%2B">AB+ Donors</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>© 2026 BloodLink. Major Project — All rights reserved.</span>
+                <span>Built with ❤️ for saving lives</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Load hero stats on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/donors/stats');
+                const data = await res.json();
+                if (data.success) {
+                    animateCounter('statDonors', data.stats.totalDonors);
+                    animateCounter('statCities', data.stats.cityStats?.length || 0);
+                    animateCounter('statLives', data.stats.totalDonations);
+                }
+            } catch (err) {
+                // Stats will fallback to HTML defaults if API is not available
+            }
+        });
+
+        function animateCounter(elementId, target) {
+            const el = document.getElementById(elementId);
+            if (!el || target === 0) { 
+                if (el && elementId === 'statLives') {
+                    el.textContent = '12+';
+                } else if (el) {
+                    el.textContent = '0+'; 
+                }
+                return; 
+            }
+            let current = 0;
+            const increment = Math.max(1, Math.ceil(target / 60));
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                el.textContent = current + '+';
+            }, 30);
+        }
+    </script>
+</body>
+</html>

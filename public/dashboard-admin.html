@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — GiftLife</title>
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{display:flex;min-height:100vh;background:#0f0f1a;color:#fff;font-family:'Inter',sans-serif}
+.sidebar{width:220px;min-height:100vh;background:#1a1a2e;padding:24px 0;flex-shrink:0;display:flex;flex-direction:column}
+.sidebar-logo{padding:0 20px 24px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sidebar-logo .brand{font-size:1.3rem;font-weight:800}
+.sidebar-logo .tagline{font-size:0.7rem;color:#aaa;margin-top:4px}
+.sidebar-nav{padding:16px 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:10px;padding:12px 20px;color:#aaa;text-decoration:none;font-size:0.85rem;font-weight:500;transition:all 0.2s;cursor:pointer;border:none;background:none;width:100%;text-align:left}
+.nav-item:hover,.nav-item.active{background:rgba(231,76,60,0.12);color:#e74c3c;border-left:3px solid #e74c3c}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08)}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 28px;background:#1a1a2e;border-bottom:1px solid rgba(255,255,255,0.08)}
+.topbar-title{font-size:1.1rem;font-weight:700;color:#fff}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.badge{background:#e74c3c;color:#fff;border-radius:20px;padding:2px 8px;font-size:0.75rem;font-weight:700}
+.content{flex:1;padding:28px;overflow-y:auto}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:#1a1a2e;border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,0.06);position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.stat-card.red::before{background:#e74c3c}
+.stat-card.blue::before{background:#3498db}
+.stat-card.orange::before{background:#e67e22}
+.stat-card.green::before{background:#2ecc71}
+.stat-icon{font-size:2rem;margin-bottom:10px}
+.stat-value{font-size:2rem;font-weight:800;color:#fff}
+.stat-label{font-size:0.8rem;color:#aaa;margin-top:4px}
+.section-title{font-size:1rem;font-weight:700;margin-bottom:16px;color:#fff;display:flex;align-items:center;justify-content:space-between}
+.card{background:#1a1a2e;border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,0.06);margin-bottom:24px}
+table{width:100%;border-collapse:collapse;font-size:0.85rem}
+th{padding:10px 12px;text-align:left;color:#aaa;font-weight:600;border-bottom:1px solid rgba(255,255,255,0.08)}
+td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,0.04);color:#ddd}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02)}
+.status-badge{padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:700}
+.status-Active{background:rgba(52,152,219,0.15);color:#3498db}
+.status-Fulfilled{background:rgba(46,204,113,0.15);color:#2ecc71}
+.status-Expired{background:rgba(149,165,166,0.15);color:#95a5a6}
+.urgency-Critical{color:#e74c3c;font-weight:700}
+.urgency-Urgent{color:#e67e22;font-weight:700}
+.urgency-Normal{color:#2ecc71}
+.btn-sm{padding:5px 12px;border-radius:6px;font-size:0.75rem;font-weight:600;border:none;cursor:pointer;transition:0.2s}
+.btn-alert{background:rgba(231,76,60,0.15);color:#e74c3c;border:1px solid rgba(231,76,60,0.3)}
+.btn-alert:hover{background:#e74c3c;color:#fff}
+.btn-done{background:rgba(46,204,113,0.15);color:#2ecc71;border:1px solid rgba(46,204,113,0.3)}
+.btn-done:hover{background:#2ecc71;color:#fff}
+.section{display:none}
+.section.active{display:block}
+.search-bar{display:flex;gap:10px;margin-bottom:16px}
+.search-bar input,.search-bar select{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;font-size:0.85rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:900px){.stats-grid{grid-template-columns:1fr 1fr}.sidebar{width:60px}.nav-item span.nav-label{display:none}.two-col{grid-template-columns:1fr}}
+
+/* Modal Styles */
+.modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;
+}
+.modal-content {
+    background: #1a1a2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 14px;
+    width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; padding: 24px;
+}
+.modal-close {
+    float: right; cursor: pointer; color: #aaa; font-size: 1.5rem; border: none; background: none;
+}
+.modal-close:hover { color: #fff; }
+/* Direct Alert Button states & Micro-animations */
+.btn-alert.sending {
+    background: rgba(230, 126, 34, 0.2) !important;
+    color: #e67e22 !important;
+    border-color: rgba(230, 126, 34, 0.4) !important;
+    cursor: wait;
+}
+.btn-alert.success-sent {
+    background: rgba(46, 204, 113, 0.2) !important;
+    color: #2ecc71 !important;
+    border-color: rgba(46, 204, 113, 0.4) !important;
+}
+.donor-match-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px; padding: 12px; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+    animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes slideInUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+</head>
+<body>
+<div class="sidebar">
+    <div class="sidebar-logo">
+        <div class="brand">🩸 Gift<span style="color:#e74c3c">Life</span></div>
+        <div class="tagline">Admin / Hospital Panel</div>
+    </div>
+    <nav class="sidebar-nav">
+        <button class="nav-item active" onclick="showSection('dashboard')">📊 <span class="nav-label">Dashboard</span></button>
+        <button class="nav-item" onclick="showSection('donors')">🩸 <span class="nav-label">Donors</span></button>
+        <button class="nav-item" onclick="showSection('requesters')">👥 <span class="nav-label">Requesters</span></button>
+        <button class="nav-item" onclick="showSection('requests')">📋 <span class="nav-label">Blood Requests</span></button>
+        <button class="nav-item" onclick="showSection('new-request')" style="color: #2ecc71;">➕ <span class="nav-label">New Request</span></button>
+        <button class="nav-item" onclick="showSection('alerts')">🚨 <span class="nav-label">Emergency Alerts</span></button>
+        <button class="nav-item" onclick="showSection('matching-alerts')" style="color: #f1c40f;">🎯 <span class="nav-label">Match & Alert Center</span></button>
+        <button class="nav-item" onclick="showSection('reports')">📈 <span class="nav-label">Reports</span></button>
+    </nav>
+    <div class="sidebar-footer">
+        <button class="nav-item" onclick="handleLogout()" style="color:#e74c3c">🚪 <span class="nav-label">Logout</span></button>
+    </div>
+</div>
+
+<div class="main">
+    <div class="topbar">
+        <div class="topbar-title" id="sectionTitle">📊 Dashboard Overview</div>
+        <div class="topbar-right">
+            <span>🏥 <strong id="adminName">Admin</strong></span>
+            <span class="badge" id="activeReqBadge">0 Active</span>
+        </div>
+    </div>
+
+    <div class="content">
+
+        <!-- Dashboard Overview -->
+        <div class="section active" id="sec-dashboard">
+            <div class="stats-grid">
+                <div class="stat-card red">
+                    <div class="stat-icon">🩸</div>
+                    <div class="stat-value" id="totalDonors">--</div>
+                    <div class="stat-label">Total Donors</div>
+                </div>
+                <div class="stat-card blue">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-value" id="totalRequesters">--</div>
+                    <div class="stat-label">Total Requesters</div>
+                </div>
+                <div class="stat-card orange">
+                    <div class="stat-icon">🚨</div>
+                    <div class="stat-value" id="activeRequests">--</div>
+                    <div class="stat-label">Active Requests</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-value" id="completedRequests">--</div>
+                    <div class="stat-label">Completed Requests</div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="section-title">Recent Blood Requests <span style="font-size:0.8rem;color:#aaa">Live Updates</span></div>
+                <table><thead><tr>
+                    <th>ID</th><th>Patient</th><th>Blood</th><th>Units</th><th>Location</th><th>Urgency</th><th>Status</th><th>Date</th><th>Action</th>
+                </tr></thead>
+                <tbody id="recentRequestsTable"><tr><td colspan="9" style="text-align:center;color:#777">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Donors Section -->
+        <div class="section" id="sec-donors">
+            <div class="search-bar">
+                <input type="text" id="donorSearch" placeholder="Search by name..." oninput="filterDonors()">
+                <select id="donorBloodFilter" onchange="filterDonors()" style="background:#1a1a2e">
+                    <option value="">All Blood Groups</option>
+                    <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+                    <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+                </select>
+                <input type="text" id="donorCityFilter" placeholder="Filter by city..." oninput="filterDonors()">
+            </div>
+            <div class="card">
+                <div class="section-title">All Registered Donors</div>
+                <table><thead><tr>
+                    <th>Name</th><th>Blood Group</th><th>City</th><th>Phone</th><th>Status</th><th>Donations</th><th>Action</th>
+                </tr></thead>
+                <tbody id="donorsTable"><tr><td colspan="7" style="text-align:center;color:#777">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Requesters Section -->
+        <div class="section" id="sec-requesters">
+            <div class="card">
+                <div class="section-title">All Registered Requesters</div>
+                <table><thead><tr>
+                    <th>Name</th><th>Email</th><th>Total Requests</th><th>Joined</th>
+                </tr></thead>
+                <tbody id="requestersTable"><tr><td colspan="4" style="text-align:center;color:#777">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Blood Requests Section -->
+        <div class="section" id="sec-requests">
+            <div class="card">
+                <div class="section-title">All Blood Requests</div>
+                <table><thead><tr>
+                    <th>Patient</th><th>Blood</th><th>Units</th><th>Hospital</th><th>City</th><th>Urgency</th><th>Status</th><th>Alerts Sent</th><th>Action</th>
+                </tr></thead>
+                <tbody id="allRequestsTable"><tr><td colspan="9" style="text-align:center;color:#777">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- New Request Section -->
+        <div class="section" id="sec-new-request">
+            <div class="card" style="max-width: 600px; margin: 0 auto;">
+                <div class="section-title">➕ Create Blood Request (Hospital Use)</div>
+                <form id="adminRequestForm" onsubmit="handleAdminCreateRequest(event)">
+                    <div class="two-col" style="margin-bottom: 16px;">
+                        <div>
+                            <label style="display:block;margin-bottom:6px;color:#aaa;font-size:0.85rem;">Patient Name *</label>
+                            <input type="text" id="reqPatient" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;" required>
+                        </div>
+                        <div>
+                            <label style="display:block;margin-bottom:6px;color:#aaa;font-size:0.85rem;">Blood Group *</label>
+                            <select id="reqBloodGroup" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:#1a1a2e;color:#fff;" required>
+                                <option value="" style="background:#1a1a2e;color:#fff">Select Blood Group</option>
+                                <option style="background:#1a1a2e;color:#fff">A+</option><option style="background:#1a1a2e;color:#fff">A-</option><option style="background:#1a1a2e;color:#fff">B+</option><option style="background:#1a1a2e;color:#fff">B-</option>
+                                <option style="background:#1a1a2e;color:#fff">AB+</option><option style="background:#1a1a2e;color:#fff">AB-</option><option style="background:#1a1a2e;color:#fff">O+</option><option style="background:#1a1a2e;color:#fff">O-</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="two-col" style="margin-bottom: 16px;">
+                        <div>
+                            <label style="display:block;margin-bottom:6px;color:#aaa;font-size:0.85rem;">Units Needed *</label>
+                            <input type="number" id="reqUnits" min="1" max="10" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;" required>
+                        </div>
+                        <div>
+                            <label style="display:block;margin-bottom:6px;color:#aaa;font-size:0.85rem;">Urgency *</label>
+                            <select id="reqUrgency" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;" required>
+                                <option value="Normal">Normal</option>
+                                <option value="Urgent">Urgent (Within 24 Hours)</option>
+                                <option value="Critical">Critical (Immediate)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="two-col" style="margin-bottom: 24px;">
+                        <div>
+                            <label style="display:block;margin-bottom:6px;color:#aaa;font-size:0.85rem;">Hospital Name *</label>
+                            <input type="text" id="reqHospital" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;" required>
+                        </div>
+                        <div>
+                            <label style="display:block;margin-bottom:6px;color:#aaa;font-size:0.85rem;">City *</label>
+                            <input type="text" id="reqCity" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:#fff;" required>
+                        </div>
+                    </div>
+                    <button type="submit" id="adminSubmitReqBtn" style="width:100%;padding:12px;background:#e74c3c;color:#fff;border:none;border-radius:8px;font-weight:bold;cursor:pointer;font-size:1rem;">Post Blood Request</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Emergency Alerts Section -->
+        <div class="section" id="sec-alerts">
+            <div class="card">
+                <div class="section-title">🚨 Send Emergency Alerts</div>
+                <p style="color:#aaa;margin-bottom:16px">Select a pending request below to send alerts to all matching donors in that city.</p>
+                <table><thead><tr>
+                    <th>Patient</th><th>Blood</th><th>Hospital</th><th>City</th><th>Urgency</th><th>Potential Matches</th><th>Donors Notified</th><th>Send Alert</th>
+                </tr></thead>
+                <tbody id="alertsTable"><tr><td colspan="8" style="text-align:center;color:#777">Loading...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Matching & Alerts Section (Match & Alert Center) -->
+        <div class="section" id="sec-matching-alerts">
+            <div id="matchCenterEmptyState" class="card" style="text-align: center; padding: 48px 24px;">
+                <div style="font-size: 3rem; margin-bottom: 16px;">🎯</div>
+                <h3 style="font-size: 1.5rem; margin-bottom: 8px; color: #fff;">No Request Selected</h3>
+                <p style="color: #aaa; max-width: 400px; margin: 0 auto 24px;">Please select any active blood request from the dashboard, blood requests list, or emergency alerts tab to view matching available donors and dispatch alerts.</p>
+                <button class="btn-sm btn-alert" style="padding: 10px 20px; font-size: 0.9rem;" onclick="showSection('requests')">📋 View Blood Requests</button>
+            </div>
+            
+            <div id="matchCenterWorkspace" style="display: none;">
+                <div class="two-col" style="margin-bottom: 24px;">
+                    <!-- Left: Request Card -->
+                    <div class="card" style="display: flex; flex-direction: column; justify-content: space-between; border-left: 4px solid #e74c3c;">
+                        <div>
+                            <div class="section-title" style="margin-bottom: 12px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px;">
+                                📋 Patient Emergency Details
+                            </div>
+                            <div style="display: grid; grid-template-columns: auto 1fr; gap: 12px 16px; font-size: 0.9rem; margin-top: 12px;">
+                                <span style="color: #aaa;">Patient Name:</span>
+                                <strong style="color: #fff;" id="mcPatientName">—</strong>
+                                
+                                <span style="color: #aaa;">Blood Group:</span>
+                                <span><span id="mcBloodGroup" style="background:#e74c3c; padding:2px 8px; border-radius:4px; font-size:0.8rem; font-weight:700;">—</span></span>
+                                
+                                <span style="color: #aaa;">Units Needed:</span>
+                                <strong id="mcUnitsNeeded">—</strong>
+                                
+                                <span style="color: #aaa;">Hospital:</span>
+                                <span id="mcHospital">—</span>
+                                
+                                <span style="color: #aaa;">Location / City:</span>
+                                <span id="mcCity">—</span>
+                                
+                                <span style="color: #aaa;">Urgency Level:</span>
+                                <strong id="mcUrgency" style="padding: 2px 6px; border-radius: 4px;">—</strong>
+
+                                <span style="color: #aaa;">Contact Phone:</span>
+                                <span id="mcContactPhone">—</span>
+
+                                <span style="color: #aaa;">Posted Date:</span>
+                                <span id="mcPostedDate">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Matches List -->
+                    <div class="card" style="display: flex; flex-direction: column; max-height: 400px;">
+                        <div class="section-title" style="margin-bottom: 12px; font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px;">
+                            🩸 Available Matching Donors
+                        </div>
+                        <div id="mcMatchesList" style="flex: 1; overflow-y: auto; padding-right: 4px; margin-top: 8px;">
+                            <!-- Dynamic Cards go here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom: Big Mass Alert Dispatch Button -->
+                <div class="card" style="text-align: center; background: rgba(231, 76, 60, 0.05); border: 1px dashed rgba(231, 76, 60, 0.3);">
+                    <h3 style="font-size: 1.2rem; margin-bottom: 8px; color: #fff;">🚨 Instant Emergency Alert Dispatcher</h3>
+                    <p style="color: #aaa; font-size: 0.85rem; margin-bottom: 16px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                        Clicking the button below will instantly dispatch SMS notifications and dashboard alerts to all matching active available donors.
+                    </p>
+                    <button class="btn-sm btn-alert" id="mcMassAlertBtn" style="padding: 14px 28px; font-size: 1.1rem; width: 100%; max-width: 500px; cursor: pointer; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                        🚨 Dispatch Mass Emergency Alert to All Matches
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Section -->
+        <div class="section" id="sec-reports">
+            <div class="two-col">
+                <div class="card">
+                    <div class="section-title">📊 Blood Group Distribution</div>
+                    <div id="bloodGroupChart" style="margin-top:10px"></div>
+                </div>
+                <div class="card">
+                    <div class="section-title">📈 Request Statistics</div>
+                    <div id="requestStats" style="margin-top:10px"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Matches Modal -->
+<div class="modal-overlay" id="matchesModal">
+    <div class="modal-content">
+        <button class="modal-close" onclick="closeMatchesModal()">&times;</button>
+        <div class="section-title">🩸 Available Matching Donors</div>
+        <p style="color:#aaa; font-size: 0.9rem; margin-bottom: 16px;">You can contact these donors directly via SMS or Phone.</p>
+        <div id="matchesList"></div>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+<script src="/js/app.js"></script>
+<script>
+let allDonors = [], allRequests = [];
+const sections = {
+    'dashboard':'📊 Dashboard Overview','donors':'🩸 Donor Management',
+    'requesters':'👥 Requester Management','requests':'📋 Blood Requests',
+    'new-request':'➕ Create New Blood Request',
+    'alerts':'🚨 Emergency Alerts','matching-alerts':'🎯 Match & Alert Center','reports':'📈 Reports'
+};
+
+function activateSection(name) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+    
+    const targetSec = document.getElementById('sec-' + name);
+    if (targetSec) targetSec.classList.add('active');
+    
+    // Find the nav button matching the section and activate it
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(btn => {
+        if (btn.getAttribute('onclick')?.includes(`showSection('${name}')`)) {
+            btn.classList.add('active');
+        }
+    });
+    
+    const titleEl = document.getElementById('sectionTitle');
+    if (titleEl && sections[name]) titleEl.textContent = sections[name];
+}
+
+function showSection(name) {
+    activateSection(name);
+}
+
+async function handleLogout() {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.href = '/login';
+}
+
+async function checkAuth() {
+    const res = await fetch('/api/auth/me');
+    if (!res.ok) { window.location.href = '/login'; return; }
+    const data = await res.json();
+    if (!data.success || data.user.role !== 'admin') { window.location.href = '/login'; return; }
+    document.getElementById('adminName').textContent = data.user.name || 'Admin';
+    document.getElementById('reqHospital').value = data.user.name || '';
+    loadDashboard();
+}
+
+async function loadDashboard() {
+    await Promise.all([loadStats(), loadDonors(), loadRequests(), loadRequesters()]);
+}
+
+async function loadStats() {
+    try {
+        const [dRes, rRes] = await Promise.all([
+            fetch('/api/donors/stats'),
+            fetch('/api/requests/stats')
+        ]);
+        const dData = await dRes.json();
+        const rData = await rRes.json();
+        if (dData.success) {
+            document.getElementById('totalDonors').textContent = dData.stats.totalDonors;
+        }
+        if (rData.success) {
+            document.getElementById('activeRequests').textContent = rData.stats.active;
+            document.getElementById('completedRequests').textContent = rData.stats.fulfilled;
+            document.getElementById('activeReqBadge').textContent = rData.stats.active + ' Active';
+        }
+    } catch (e) {}
+}
+
+async function loadRequesters() {
+    try {
+        const res = await fetch('/api/auth/all-requesters');
+        const data = await res.json();
+        if (data.success) {
+            document.getElementById('totalRequesters').textContent = data.users.length;
+            document.getElementById('requestersTable').innerHTML = data.users.length === 0
+                ? '<tr><td colspan="4" style="text-align:center;color:#777">No requesters yet.</td></tr>'
+                : data.users.map(u => `<tr>
+                    <td>${u.name || '—'}</td>
+                    <td>${u.email}</td>
+                    <td>${u.requestCount || 0}</td>
+                    <td>${new Date(u.createdAt).toLocaleDateString()}</td>
+                </tr>`).join('');
+        }
+    } catch (e) {}
+}
+
+async function loadDonors() {
+    try {
+        const res = await fetch('/api/donors/all');
+        const data = await res.json();
+        if (data.success) {
+            allDonors = data.donors;
+            renderDonors(allDonors);
+        }
+    } catch (e) {}
+}
+
+function renderDonors(donors) {
+    document.getElementById('donorsTable').innerHTML = donors.length === 0
+        ? '<tr><td colspan="7" style="text-align:center;color:#777">No donors yet.</td></tr>'
+        : donors.map(d => {
+            const isOnCooldown = !d.available && d.availableAfter && new Date(d.availableAfter) > new Date();
+            const daysLeft = isOnCooldown ? Math.ceil((new Date(d.availableAfter) - new Date()) / (1000 * 60 * 60 * 24)) : 0;
+            let statusHtml, actionHtml;
+
+            if (isOnCooldown) {
+                statusHtml = `<span style="color:#e67e22">🔒 Cooldown (${daysLeft}d)</span>`;
+                actionHtml = `<span style="font-size:0.75rem;color:#777" title="Available after ${new Date(d.availableAfter).toLocaleDateString()}">Auto-reactivates</span>`;
+            } else {
+                statusHtml = `<span style="color:${d.available ? '#2ecc71' : '#e74c3c'}">● ${d.available ? 'Available' : 'Unavailable'}</span>`;
+                actionHtml = `<button class="btn-sm btn-alert" onclick="toggleDonor('${d._id}', this)">${d.available ? 'Deactivate' : 'Activate'}</button>`;
+            }
+
+            return `<tr>
+            <td>${d.name}</td>
+            <td><span style="background:#e74c3c;padding:2px 8px;border-radius:4px;font-size:0.8rem;font-weight:700">${d.bloodGroup}</span></td>
+            <td>${d.city}</td>
+            <td>${d.phone || '—'}</td>
+            <td>${statusHtml}</td>
+            <td>${d.donationCount || 0}</td>
+            <td>${actionHtml}</td>
+        </tr>`;
+        }).join('');
+}
+
+function filterDonors() {
+    const search = document.getElementById('donorSearch').value.toLowerCase();
+    const bg = document.getElementById('donorBloodFilter').value;
+    const city = document.getElementById('donorCityFilter').value.toLowerCase();
+    const filtered = allDonors.filter(d =>
+        (!search || d.name.toLowerCase().includes(search)) &&
+        (!bg || d.bloodGroup === bg) &&
+        (!city || d.city.toLowerCase().includes(city))
+    );
+    renderDonors(filtered);
+}
+
+async function toggleDonor(id, btn) {
+    const res = await fetch(`/api/donors/${id}/toggle`, { method: 'PATCH' });
+    const data = await res.json();
+    if (data.success) { showToast(data.message, 'success'); loadDonors(); }
+}
+
+async function loadRequests() {
+    try {
+        const res = await fetch('/api/requests/all');
+        const data = await res.json();
+        if (data.success) {
+            allRequests = data.requests;
+            renderRecentRequests(data.requests.slice(0, 5));
+            renderAllRequests(data.requests);
+            renderAlertsTable(data.requests.filter(r => r.status === 'Active'));
+            renderReports(data.requests);
+        }
+    } catch (e) {}
+}
+
+function renderRecentRequests(requests) {
+    document.getElementById('recentRequestsTable').innerHTML = requests.length === 0
+        ? '<tr><td colspan="9" style="text-align:center;color:#777">No requests yet.</td></tr>'
+        : requests.map((r,i) => `<tr>
+            <td>#${101+i}</td>
+            <td>${r.patientName}</td>
+            <td><span style="background:#e74c3c;padding:2px 6px;border-radius:4px;font-size:0.8rem;font-weight:700">${r.bloodGroup}</span></td>
+            <td>${r.unitsNeeded}</td>
+            <td>${r.city}</td>
+            <td class="urgency-${r.urgency}">${r.urgency}</td>
+            <td><span class="status-badge status-${r.status}">${r.status}</span></td>
+            <td>${new Date(r.createdAt).toLocaleDateString()}</td>
+            <td>
+                <button class="btn-sm" style="background: rgba(52, 152, 219, 0.15); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); margin-right: 4px;" onclick="viewMatches('${r._id}')">👁️ View Matches</button>
+                <button class="btn-sm btn-alert" onclick="viewMatches('${r._id}')">🚨 Mass Alert</button>
+                ${r.status === 'Active' ? `<button class="btn-sm btn-done" onclick="markDone('${r._id}')" style="margin-left:4px">✅ Done</button>` : ''}
+            </td>
+        </tr>`).join('');
+}
+
+function renderAllRequests(requests) {
+    document.getElementById('allRequestsTable').innerHTML = requests.length === 0
+        ? '<tr><td colspan="9" style="text-align:center;color:#777">No requests yet.</td></tr>'
+        : requests.map(r => `<tr>
+            <td>${r.patientName}</td>
+            <td><span style="background:#e74c3c;padding:2px 6px;border-radius:4px;font-size:0.8rem;font-weight:700">${r.bloodGroup}</span></td>
+            <td>${r.unitsNeeded}</td>
+            <td>${r.hospital}</td>
+            <td>${r.city}</td>
+            <td class="urgency-${r.urgency}">${r.urgency}</td>
+            <td><span class="status-badge status-${r.status}">${r.status}</span></td>
+            <td>${r.donorsNotified || 0}</td>
+            <td>
+                <button class="btn-sm" style="background: rgba(52, 152, 219, 0.15); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); margin-right: 4px;" onclick="viewMatches('${r._id}')">👁️ View Matches</button>
+                <button class="btn-sm btn-alert" onclick="viewMatches('${r._id}')">🚨 Mass Alert</button>
+                ${r.status === 'Active' ? `<button class="btn-sm btn-done" onclick="markDone('${r._id}')" style="margin-left:4px">✅ Done</button>` : ''}
+            </td>
+        </tr>`).join('');
+}
+
+function renderAlertsTable(requests) {
+    document.getElementById('alertsTable').innerHTML = requests.length === 0
+        ? '<tr><td colspan="8" style="text-align:center;color:#777">No active requests.</td></tr>'
+        : requests.map(r => {
+            const matchCount = allDonors.filter(d => d.bloodGroup === r.bloodGroup && d.city.toLowerCase() === r.city.toLowerCase() && d.available).length;
+            return `<tr>
+                <td>${r.patientName}</td>
+                <td><span style="background:#e74c3c;padding:2px 6px;border-radius:4px;font-size:0.8rem;font-weight:700">${r.bloodGroup}</span></td>
+                <td>${r.hospital}</td><td>${r.city}</td>
+                <td class="urgency-${r.urgency}">${r.urgency}</td>
+                <td><strong style="color:#2ecc71">${matchCount}</strong> Donors</td>
+                <td>${r.donorsNotified || 0}</td>
+                <td>
+                    <button class="btn-sm" style="background: rgba(52, 152, 219, 0.15); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3); margin-right: 4px;" onclick="viewMatches('${r._id}')">👁️ View Matches</button>
+                    <button class="btn-sm btn-alert" onclick="viewMatches('${r._id}')" ${matchCount === 0 ? 'disabled style="opacity:0.5;cursor:not-allowed;" title="No matching donors found"' : ''}>🚨 Mass Alert</button>
+                </td>
+            </tr>`;
+        }).join('');
+}
+
+function renderReports(requests) {
+    const bgCount = {};
+    requests.forEach(r => { bgCount[r.bloodGroup] = (bgCount[r.bloodGroup] || 0) + 1; });
+    const total = requests.length;
+    const active = requests.filter(r => r.status === 'Active').length;
+    const fulfilled = requests.filter(r => r.status === 'Fulfilled').length;
+
+    document.getElementById('bloodGroupChart').innerHTML = Object.entries(bgCount).map(([bg, count]) => `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span style="background:#e74c3c;padding:2px 8px;border-radius:4px;font-size:0.8rem;font-weight:700;min-width:40px;text-align:center">${bg}</span>
+            <div style="flex:1;background:rgba(255,255,255,0.05);border-radius:4px;overflow:hidden;height:16px">
+                <div style="background:#e74c3c;height:100%;width:${total ? (count/total*100) : 0}%;transition:width 0.5s"></div>
+            </div>
+            <span style="color:#aaa;font-size:0.85rem">${count}</span>
+        </div>`).join('') || '<p style="color:#777">No data yet.</p>';
+
+    document.getElementById('requestStats').innerHTML = `
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;text-align:center">
+            <div style="background:rgba(231,76,60,0.1);padding:16px;border-radius:10px">
+                <div style="font-size:1.5rem;font-weight:800;color:#e74c3c">${total}</div>
+                <div style="font-size:0.8rem;color:#aaa">Total</div>
+            </div>
+            <div style="background:rgba(52,152,219,0.1);padding:16px;border-radius:10px">
+                <div style="font-size:1.5rem;font-weight:800;color:#3498db">${active}</div>
+                <div style="font-size:0.8rem;color:#aaa">Active</div>
+            </div>
+            <div style="background:rgba(46,204,113,0.1);padding:16px;border-radius:10px">
+                <div style="font-size:1.5rem;font-weight:800;color:#2ecc71">${fulfilled}</div>
+                <div style="font-size:0.8rem;color:#aaa">Fulfilled</div>
+            </div>
+        </div>`;
+}
+
+// confirmSendAlert is handled below in Match & Alert Center logic
+
+async function markDone(id) {
+    const res = await fetch(`/api/requests/${id}/status`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'Fulfilled' })
+    });
+    const data = await res.json();
+    if (data.success) { showToast('Marked as fulfilled!', 'success'); loadDashboard(); }
+}
+
+async function handleAdminCreateRequest(e) {
+    e.preventDefault();
+    const btn = document.getElementById('adminSubmitReqBtn');
+    btn.disabled = true; btn.textContent = '⏳ Creating...';
+    
+    const payload = {
+        patientName: document.getElementById('reqPatient').value.trim(),
+        bloodGroup: document.getElementById('reqBloodGroup').value,
+        unitsNeeded: document.getElementById('reqUnits').value,
+        urgency: document.getElementById('reqUrgency').value,
+        hospital: document.getElementById('reqHospital').value.trim(),
+        city: document.getElementById('reqCity').value.trim()
+    };
+
+    try {
+        const res = await fetch('/api/requests/create', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+            showToast('Blood Request created successfully!', 'success');
+            document.getElementById('adminRequestForm').reset();
+            document.getElementById('reqHospital').value = document.getElementById('adminName').textContent;
+            // Navigate to Blood Requests section directly (no event context here)
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.getElementById('sec-requests').classList.add('active');
+            document.getElementById('sectionTitle').textContent = sections['requests'];
+            loadDashboard();
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (err) {
+        showToast('Network error.', 'error');
+    }
+    btn.disabled = false; btn.textContent = 'Post Blood Request';
+}
+
+async function viewMatches(reqId) {
+    // 1. Activate the Match & Alert Center section
+    activateSection('matching-alerts');
+    
+    // 2. Toggle visibility of empty state and workspace
+    document.getElementById('matchCenterEmptyState').style.display = 'none';
+    const workspace = document.getElementById('matchCenterWorkspace');
+    workspace.style.display = 'block';
+    
+    // 3. Show loading status on matching donors panel
+    const matchesContainer = document.getElementById('mcMatchesList');
+    matchesContainer.innerHTML = '<p style="color:#777; text-align:center; padding:16px;">Loading matching donors...</p>';
+    
+    // 4. Reset patient details card to loading
+    document.getElementById('mcPatientName').textContent = 'Loading...';
+    document.getElementById('mcBloodGroup').textContent = '—';
+    document.getElementById('mcUnitsNeeded').textContent = '—';
+    document.getElementById('mcHospital').textContent = '—';
+    document.getElementById('mcCity').textContent = '—';
+    document.getElementById('mcUrgency').textContent = '—';
+    document.getElementById('mcContactPhone').textContent = '—';
+    document.getElementById('mcPostedDate').textContent = '—';
+    
+    const massAlertBtn = document.getElementById('mcMassAlertBtn');
+    massAlertBtn.disabled = true;
+    massAlertBtn.className = 'btn-sm btn-alert';
+    massAlertBtn.innerHTML = '🚨 Dispatch Mass Emergency Alert to All Matches';
+
+    try {
+        // 5. Fetch request details and matches concurrently
+        const [requestsRes, matchesRes] = await Promise.all([
+            fetch('/api/requests/all'),
+            fetch(`/api/requests/${reqId}/matches`)
+        ]);
+        
+        const requestsData = await requestsRes.json();
+        const matchesData = await matchesRes.json();
+        
+        if (!requestsData.success || !matchesData.success) {
+            matchesContainer.innerHTML = '<p style="color:#e74c3c; text-align:center; padding:16px;">Failed to load data from server.</p>';
+            return;
+        }
+        
+        const request = requestsData.requests.find(r => r._id === reqId);
+        if (!request) {
+            matchesContainer.innerHTML = '<p style="color:#e74c3c; text-align:center; padding:16px;">Request not found.</p>';
+            return;
+        }
+        
+        // 6. Populate patient emergency card details
+        document.getElementById('mcPatientName').textContent = request.patientName;
+        
+        const bgEl = document.getElementById('mcBloodGroup');
+        bgEl.textContent = request.bloodGroup;
+        bgEl.style.background = '#e74c3c';
+        
+        document.getElementById('mcUnitsNeeded').textContent = `${request.unitsNeeded} Unit(s)`;
+        document.getElementById('mcHospital').textContent = request.hospital;
+        document.getElementById('mcCity').textContent = request.city;
+        
+        const urgencyEl = document.getElementById('mcUrgency');
+        urgencyEl.textContent = request.urgency;
+        urgencyEl.className = `urgency-${request.urgency}`;
+        
+        document.getElementById('mcContactPhone').textContent = request.contactPhone || 'N/A';
+        document.getElementById('mcPostedDate').textContent = new Date(request.createdAt).toLocaleDateString('en-IN', {
+            day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+        });
+        
+        // 7. Render matching donors
+        const donors = matchesData.donors || [];
+        if (donors.length === 0) {
+            matchesContainer.innerHTML = '<p style="color:#aaa; text-align:center; padding:32px;">⚠️ No active available donors found for this blood group and city.</p>';
+            massAlertBtn.disabled = true;
+            massAlertBtn.innerHTML = '🚨 No Matching Donors to Alert';
+            massAlertBtn.style.opacity = '0.5';
+            massAlertBtn.style.cursor = 'not-allowed';
+        } else {
+            matchesContainer.innerHTML = donors.map(d => `
+                <div class="donor-match-card">
+                    <div>
+                        <h4 style="margin: 0; color: #fff;">${d.name}</h4>
+                        <div style="font-size: 0.8rem; color: #aaa; margin-top:4px;">📍 ${d.city} &nbsp;|&nbsp; 🩸 ${d.bloodGroup}</div>
+                        <div style="font-size: 0.8rem; color: #aaa;">Donations: ${d.donationCount || 0} &nbsp;|&nbsp; 📞 ${d.phone}</div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <a href="tel:${d.phone}" class="btn-sm" style="text-decoration: none; display: inline-block; background: rgba(52, 152, 219, 0.15); color: #3498db; border: 1px solid rgba(52, 152, 219, 0.3);">📞 Call</a>
+                        <a href="sms:${d.phone}?body=${encodeURIComponent('URGENT: Blood needed at ' + request.hospital + '. Are you available to donate?')}" class="btn-sm" style="text-decoration: none; display: inline-block; background: rgba(37, 211, 102, 0.15); color: #2ecc71; border: 1px solid rgba(37, 211, 102, 0.3);">💬 SMS</a>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Enable and configure the mass alert button
+            massAlertBtn.disabled = false;
+            massAlertBtn.style.opacity = '1';
+            massAlertBtn.style.cursor = 'pointer';
+            massAlertBtn.innerHTML = `🚨 Dispatch Mass Emergency Alert to All ${donors.length} Matches`;
+            massAlertBtn.onclick = function() {
+                confirmSendAlert(reqId, this);
+            };
+        }
+        
+    } catch (err) {
+        console.error('loadMatchCenter error:', err);
+        matchesContainer.innerHTML = '<p style="color:#e74c3c; text-align:center; padding:16px;">Network error loading workspace.</p>';
+    }
+}
+
+async function confirmSendAlert(id, btn) {
+    if (btn.disabled || btn.classList.contains('sending')) return;
+    
+    btn.disabled = true;
+    btn.classList.add('sending');
+    btn.textContent = '⏳ Dispatching Emergency Alerts...';
+    
+    try {
+        const res = await fetch(`/api/requests/${id}/alert`, { method: 'POST' });
+        const data = await res.json();
+        
+        if (data.success) { 
+            btn.classList.remove('sending');
+            btn.classList.add('success-sent');
+            btn.style.background = '#2ecc71';
+            btn.style.color = '#fff';
+            btn.style.borderColor = '#2ecc71';
+            btn.textContent = `✅ Emergency Alerts Dispatched Successfully!`;
+            
+            showToast(data.message, 'success'); 
+            loadRequests(); // Refresh requests list
+            
+            // Reload the matches center after 2 seconds to reflect updated counts
+            setTimeout(() => {
+                viewMatches(id);
+            }, 2000);
+        } else { 
+            showToast(data.message, 'error'); 
+            btn.disabled = false; 
+            btn.classList.remove('sending');
+            btn.style.background = '';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+            btn.textContent = '🚨 Dispatch Mass Emergency Alert to All Matches'; 
+        }
+    } catch(err) {
+        showToast('Network error sending alerts.', 'error');
+        btn.disabled = false;
+        btn.classList.remove('sending');
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+        btn.textContent = '🚨 Dispatch Mass Emergency Alert to All Matches';
+    }
+}
+
+function closeMatchesModal() {
+    document.getElementById('matchesModal').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', checkAuth);
+</script>
+</body>
+</html>

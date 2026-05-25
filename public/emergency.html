@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Submit an emergency blood request on BloodLink. Alert matching donors instantly.">
+    <title>Emergency Blood Request — BloodLink</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩸</text></svg>">
+</head>
+<body>
+    <div class="bg-grid"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar scrolled" id="navbar">
+        <div class="container">
+            <a href="/" class="nav-logo" style="flex-direction: column; align-items: flex-start; gap: 0;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span class="logo-icon">🩸</span>
+                    <span>Gift<span class="text-gradient">Life</span></span>
+                </div>
+                <span style="font-size: 0.75rem; color: #aaa; margin-left: 36px; margin-top: -4px; font-weight: 500; letter-spacing: 0.5px;">Every donation is second Chance</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="/search">Find Donors</a>
+                <a href="/emergency" class="active">Emergency</a>
+                <a href="/login" class="nav-cta btn-secondary" style="background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 16px; margin-right: 8px;">🔑 Login</a>
+                <a href="/register" class="nav-cta">Register as Donor</a>
+            </div>
+            <div class="nav-toggle" id="navToggle" onclick="toggleNav()">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <span class="section-label">🚨 Emergency</span>
+            <h1>Emergency <span class="text-gradient">Blood Request</span></h1>
+            <p>Submit an urgent blood request and alert all matching donors in your area.</p>
+        </div>
+    </div>
+
+    <!-- Emergency Form -->
+    <section class="form-page">
+        <div class="container">
+            <div class="form-container" id="requesterFormContainer">
+                <!-- Emergency Banner -->
+                <div class="emergency-banner">
+                    <div class="emergency-banner-icon">🚨</div>
+                    <div>
+                        <h3>Urgent Blood Needed?</h3>
+                        <p>Submit this form to instantly notify all matching donors in your city. Response time is typically under 30 minutes.</p>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h2>Request Details</h2>
+                    <p class="form-desc">Provide accurate information to help us find the right donors quickly.</p>
+
+                    <form id="emergencyForm">
+                        <!-- Urgency Level -->
+                        <div class="form-group">
+                            <label class="form-label">Urgency Level *</label>
+                            <div class="urgency-levels">
+                                <div class="urgency-option critical">
+                                    <input type="radio" name="urgency" id="urgency-critical" value="Critical" required>
+                                    <label for="urgency-critical">
+                                        <span class="urgency-icon">🔴</span>
+                                        <span class="urgency-name">Critical</span>
+                                        <span class="urgency-desc">Need within 1 hour</span>
+                                    </label>
+                                </div>
+                                <div class="urgency-option urgent">
+                                    <input type="radio" name="urgency" id="urgency-urgent" value="Urgent">
+                                    <label for="urgency-urgent">
+                                        <span class="urgency-icon">🟠</span>
+                                        <span class="urgency-name">Urgent</span>
+                                        <span class="urgency-desc">Need within 6 hours</span>
+                                    </label>
+                                </div>
+                                <div class="urgency-option normal">
+                                    <input type="radio" name="urgency" id="urgency-normal" value="Normal">
+                                    <label for="urgency-normal">
+                                        <span class="urgency-icon">🔵</span>
+                                        <span class="urgency-name">Normal</span>
+                                        <span class="urgency-desc">Need within 24 hours</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Patient Name & Blood Group -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="em-patient">Patient Name *</label>
+                                <input type="text" class="form-input" id="em-patient" name="patientName" placeholder="Patient's full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="em-blood">Blood Group Needed *</label>
+                                <select class="form-select" id="em-blood" name="bloodGroup" required>
+                                    <option value="">Select blood group</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Units & Hospital -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="em-units">Units Needed *</label>
+                                <input type="number" class="form-input" id="em-units" name="unitsNeeded" placeholder="e.g. 2" required min="1" max="10" value="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="em-hospital">Hospital Name *</label>
+                                <input type="text" class="form-input" id="em-hospital" name="hospital" placeholder="e.g. AIIMS" required>
+                            </div>
+                        </div>
+
+                        <!-- City -->
+                        <div class="form-group">
+                            <label class="form-label" for="em-city">City *</label>
+                            <input type="text" class="form-input" id="em-city" name="city" placeholder="e.g. Delhi" required>
+                        </div>
+
+                        <div class="form-divider"></div>
+
+                        <!-- Contact Info -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="em-contact">Contact Person *</label>
+                                <input type="text" class="form-input" id="em-contact" name="contactPerson" placeholder="Contact person name" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="em-phone">Contact Phone *</label>
+                                <input type="tel" class="form-input" id="em-phone" name="contactPhone" placeholder="e.g. 9876543210" required>
+                            </div>
+                        </div>
+
+                        <!-- Additional Notes -->
+                        <div class="form-group">
+                            <label class="form-label" for="em-notes">Additional Notes</label>
+                            <textarea class="form-input form-textarea" id="em-notes" name="additionalNotes" placeholder="Any additional information (ward number, doctor name, etc.)" rows="3"></textarea>
+                        </div>
+
+                        <!-- Submit -->
+                        <button type="submit" class="btn btn-danger btn-lg" id="emergencyBtn" style="width: 100%; margin-top: 8px;">
+                            🚨 Send Emergency Alert
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <!-- Donor Active Alerts View -->
+            <div class="form-container" id="donorAlertsContainer" style="display: none; max-width: 800px;"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <span>© 2026 BloodLink. Major Project — All rights reserved.</span>
+                <span>Built with ❤️ for saving lives</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="/js/app.js"></script>
+    <script>
+        // Check if user is a logged-in donor
+        let donorProfile = null;
+        
+        async function checkDonorStatus() {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.success && data.user.role === 'donor') {
+                        // Change headers dynamically
+                        const labelSpan = document.querySelector('.page-header .section-label');
+                        if (labelSpan) labelSpan.textContent = '🚨 Active Alerts';
+                        
+                        const titleH1 = document.querySelector('.page-header h1');
+                        if (titleH1) titleH1.innerHTML = 'Emergency Alerts <span class="text-gradient">For You</span>';
+                        
+                        const descP = document.querySelector('.page-header p');
+                        if (descP) descP.textContent = 'These are critical blood requests matching your blood group in your city.';
+                        
+                        // Hide requester form & show donor alerts container
+                        document.getElementById('requesterFormContainer').style.display = 'none';
+                        const donorContainer = document.getElementById('donorAlertsContainer');
+                        donorContainer.style.display = 'block';
+                        
+                        // Fetch donor profile to get blood group and city
+                        const profileRes = await fetch('/api/donors/me');
+                        const profileData = await profileRes.json();
+                        if (profileData.success) {
+                            donorProfile = profileData.donor;
+                            loadDonorAlerts();
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to load donor emergency alerts:', e);
+            }
+        }
+        
+        async function loadDonorAlerts() {
+            const container = document.getElementById('donorAlertsContainer');
+            if (!donorProfile) return;
+            
+            container.innerHTML = `
+                <div style="background: rgba(231,76,60,0.05); border: 1px solid rgba(231,76,60,0.1); border-radius: 16px; padding: 24px; margin-bottom: 24px; text-align: center;">
+                    <h3 style="margin: 0; font-size: 1.3rem;">📋 Matching Criteria</h3>
+                    <p style="color: #aaa; margin: 8px 0 0 0; font-size: 0.9rem;">
+                        Blood Group: <strong style="color: #fff; background: #e74c3c; padding: 2px 8px; border-radius: 4px;">${donorProfile.bloodGroup}</strong> 
+                        &nbsp;|&nbsp; City: <strong style="color: #fff;">${donorProfile.city}</strong>
+                    </p>
+                </div>
+                <div id="alertsList">
+                    <div style="text-align: center; padding: 40px; color: #777;">
+                        <span class="loader"><span></span><span></span><span></span></span>
+                    </div>
+                </div>
+            `;
+            
+            try {
+                const res = await fetch(`/api/requests/matching?bloodGroup=${encodeURIComponent(donorProfile.bloodGroup)}&city=${encodeURIComponent(donorProfile.city)}`);
+                const data = await res.json();
+                const listEl = document.getElementById('alertsList');
+                
+                if (data.success && data.requests.length > 0) {
+                    listEl.innerHTML = data.requests.map(req => `
+                        <div class="form-card" style="margin-bottom: 20px; border-left: 6px solid #e74c3c; padding: 24px; position: relative;">
+                            <div style="position: absolute; top: 24px; right: 24px; background: #e74c3c; color: #fff; font-size: 1.2rem; font-weight: bold; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 12px; box-shadow: 0 4px 12px rgba(231,76,60,0.3);">
+                                ${req.bloodGroup}
+                            </div>
+                            
+                            <h3 style="margin: 0 0 8px 0; color: #fff; font-size: 1.25rem;">🏥 ${req.hospital}</h3>
+                            <p style="margin: 0 0 6px 0; font-size: 0.95rem; color: #eee;"><strong>Patient:</strong> ${req.patientName}</p>
+                            
+                            <div style="display: flex; flex-wrap: wrap; gap: 16px; margin: 12px 0 20px 0; font-size: 0.85rem; color: #aaa;">
+                                <span>📍 <strong>City:</strong> ${req.city}</span>
+                                <span>📋 <strong>Units Needed:</strong> ${req.unitsNeeded}</span>
+                                <span>⚠️ <strong>Urgency:</strong> <span style="color: #e67e22; font-weight: bold;">${req.urgency}</span></span>
+                            </div>
+                            
+                            \${req.additionalNotes ? `
+                                <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 0.85rem; line-height: 1.4; color: #ccc;">
+                                    📝 <strong>Notes:</strong> \${req.additionalNotes}
+                                </div>
+                            ` : ''}
+                            
+                            <div style="display: flex; gap: 12px;">
+                                <button class="btn btn-primary" style="background: #2ecc71; border: none; padding: 10px 24px; font-size: 0.9rem;" onclick="respondToRequest('\${req._id}', 'Accepted')">
+                                    ✓ Accept Request
+                                </button>
+                                <button class="btn btn-secondary" style="padding: 10px 24px; font-size: 0.9rem;" onclick="respondToRequest('\${req._id}', 'Declined')">
+                                    ✕ Decline
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    listEl.innerHTML = `
+                        <div style="text-align: center; padding: 60px 20px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px;">
+                            <div style="font-size: 3rem; margin-bottom: 16px;">✅</div>
+                            <h3 style="margin: 0; color: #fff;">No Active Emergency Alerts</h3>
+                            <p style="color: #aaa; margin: 8px 0 0 0; font-size: 0.9rem;">There are no matching urgent requests in your city at this time. Thank you for being available!</p>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                document.getElementById('alertsList').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #e74c3c;">Failed to load alerts. Please refresh the page.</div>
+                `;
+            }
+        }
+        
+        async function respondToRequest(requestId, status) {
+            try {
+                const res = await fetch('/api/requests/respond', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ requestId, status })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    // Refresh alerts
+                    loadDonorAlerts();
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (err) {
+                showToast('Failed to send response.', 'error');
+            }
+        }
+
+        document.getElementById('emergencyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('emergencyBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<span class="loader"><span></span><span></span><span></span></span> Sending Alert...';
+            btn.disabled = true;
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            if (data.unitsNeeded) data.unitsNeeded = parseInt(data.unitsNeeded);
+            if (!data.additionalNotes) delete data.additionalNotes;
+
+            try {
+                const res = await fetch('/api/requests/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    showToast(`🚨 ${result.message}`, 'success');
+                    e.target.reset();
+                    
+                    btn.innerHTML = `✅ Alert Sent to ${result.donorsNotified} Donors!`;
+                    btn.style.background = 'linear-gradient(135deg, #2ecc71, #27ae60)';
+                    setTimeout(() => {
+                        btn.innerHTML = originalText;
+                        btn.style.background = '';
+                        btn.disabled = false;
+                    }, 4000);
+                } else {
+                    showToast('❌ ' + result.message, 'error');
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            } catch (err) {
+                showToast('❌ Network error. Please try again.', 'error');
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', checkDonorStatus);
+    </script>
+</body>
+</html>

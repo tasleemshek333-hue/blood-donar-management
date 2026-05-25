@@ -1,0 +1,19 @@
+{
+  "name": "blood-donor-app",
+  "version": "1.0.0",
+  "description": "Local Blood Donor Finder & Emergency Alert System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "connect-mongo": "^6.0.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-session": "^1.19.0",
+    "mongodb-memory-server": "^11.0.1",
+    "mongoose": "^7.6.3"
+  }
+}
