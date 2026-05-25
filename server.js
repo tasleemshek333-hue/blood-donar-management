@@ -10,7 +10,7 @@ const app = express();
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"), { index: false }));
 
 // Setup sessions
 const sessionConfig = {
@@ -135,7 +135,7 @@ app.use("/api/requests", requestRoutes);
 app.use("/api/auth", authRoutes);
 
 // Serve pages
-app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/", (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
 app.get("/register", (req, res) => res.sendFile(path.join(__dirname, "public", "register.html")));
 app.get("/register-requester", (req, res) => res.sendFile(path.join(__dirname, "public", "register-requester.html")));
 app.get("/search", (req, res) => res.sendFile(path.join(__dirname, "public", "search.html")));
@@ -144,6 +144,7 @@ app.get("/dashboard-admin", (req, res) => res.sendFile(path.join(__dirname, "pub
 app.get("/dashboard-donor", (req, res) => res.sendFile(path.join(__dirname, "public", "dashboard-donor.html")));
 app.get("/dashboard-requester", (req, res) => res.sendFile(path.join(__dirname, "public", "dashboard-requester.html")));
 app.get("/login", (req, res) => res.sendFile(path.join(__dirname, "public", "login.html")));
+app.get("/home", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 
 // 404 handler
 app.use((req, res) => {
