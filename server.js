@@ -24,6 +24,20 @@ const sessionConfig = {
     }
 };
 
+const sanitizeMongoUri = (uri) => {
+    if (uri && typeof uri === 'string') {
+        // Fix the typo where 'm' was typed instead of '@' before 'giftlife'
+        if (uri.includes('Tasleem1997mgiftlife')) {
+            return uri.replace('Tasleem1997mgiftlife', 'Tasleem1997@giftlife');
+        }
+    }
+    return uri;
+};
+
+if (process.env.MONGODB_URI) {
+    process.env.MONGODB_URI = sanitizeMongoUri(process.env.MONGODB_URI);
+}
+
 const isValidMongoUri = (uri) => {
     return uri && typeof uri === 'string' && (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')) && !uri.includes('<username>') && !uri.includes('<password>');
 };
