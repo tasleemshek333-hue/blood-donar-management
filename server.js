@@ -48,24 +48,8 @@ const isValidMongoUri = (uri) => {
     return uri && typeof uri === 'string' && (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')) && uri.includes('@') && !uri.includes('<username>') && !uri.includes('<password>');
 };
 
-if (isValidMongoUri(process.env.MONGODB_URI)) {
-    try {
-        const MongoStore = require("connect-mongo");
-        const store = MongoStore.create({
-            mongoUrl: process.env.MONGODB_URI,
-            ttl: 8 * 60 * 60 // 8 hours
-        });
-        store.on('error', function(error) {
-            console.error("⚠️ connect-mongo session store connection error:", error.message);
-        });
-        sessionConfig.store = store;
-        console.log("✅ connect-mongo session store initialized successfully.");
-    } catch (e) {
-        console.error("⚠️ Failed to initialize connect-mongo session store, falling back to MemoryStore:", e.message);
-    }
-} else {
-    console.log("ℹ️ Using default memory session store (MemoryStore).");
-}
+// We default to MemoryStore for sessions to ensure maximum stability and zero startup connection crashes.
+console.log("ℹ️ Using memory session store (MemoryStore) for flawless stability.");
 app.use(session(sessionConfig));
 
 const fs = require("fs");
@@ -73,13 +57,26 @@ const fs = require("fs");
 // MongoDB Connection
 async function connectDB() {
     try {
-        let mongoUri;
-        if (isValidMongoUri(process.env.MONGODB_URI)) {
-            mongoUri = process.env.MONGODB_URI;
-            await mongoose.connect(mongoUri);
+        let connected = false;
+    
+    // 1. Attempt connection to Remote MongoDB Atlas (if URI is valid)
+    if (isValidMongoUri(process.env.MONGODB_URI)) {
+        try {
+            console.log("⏳ Attempting to connect to MongoDB Atlas...");
+            await mongoose.connect(process.env.MONGODB_URI, {
+                serverSelectionTimeoutMS: 5000 // 5 seconds timeout
+            });
             console.log("✅ MongoDB (Remote Atlas) Connected Successfully");
-        } else {
-            console.log("⚠️ Valid MONGODB_URI not found. Initializing Local MongoDB In-Memory Server...");
+            connected = true;
+        } catch (err) {
+            console.error("⚠️ MongoDB Atlas Connection Error:", err.message);
+            console.log("👉 Falling back to Local MongoDB In-Memory Server...");
+        }
+    }
+    
+    // 2. Fallback to Local MongoDB memory server if Atlas is unreachable or configuration is invalid
+    if (!connected) {
+        try {
             const dbPath = path.join(__dirname, "database_data");
             if (!fs.existsSync(dbPath)) fs.mkdirSync(dbPath, { recursive: true });
 
@@ -87,11 +84,14 @@ async function connectDB() {
             const mongoServer = await MongoMemoryServer.create({
                 instance: { dbPath: dbPath }
             });
-            mongoUri = mongoServer.getUri();
+            const mongoUri = mongoServer.getUri();
             await mongoose.connect(mongoUri);
             console.log("✅ MongoDB (Local In-Memory) Connected Successfully");
             console.log(`📂 Database is PERMANENTLY stored at: ${dbPath}`);
+        } catch (localErr) {
+            console.error("❌ Critical Error: Failed to initialize Local MongoDB:", localErr.message);
         }
+    }
 
         // Seed or fix admin if needed
         const User = require("./models/User");
