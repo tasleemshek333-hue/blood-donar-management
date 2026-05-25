@@ -51,10 +51,14 @@ const isValidMongoUri = (uri) => {
 if (isValidMongoUri(process.env.MONGODB_URI)) {
     try {
         const MongoStore = require("connect-mongo");
-        sessionConfig.store = MongoStore.create({
+        const store = MongoStore.create({
             mongoUrl: process.env.MONGODB_URI,
             ttl: 8 * 60 * 60 // 8 hours
         });
+        store.on('error', function(error) {
+            console.error("⚠️ connect-mongo session store connection error:", error.message);
+        });
+        sessionConfig.store = store;
         console.log("✅ connect-mongo session store initialized successfully.");
     } catch (e) {
         console.error("⚠️ Failed to initialize connect-mongo session store, falling back to MemoryStore:", e.message);
