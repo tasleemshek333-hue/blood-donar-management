@@ -24,12 +24,23 @@ const sessionConfig = {
     }
 };
 
-if (process.env.MONGODB_URI) {
-    const MongoStore = require("connect-mongo");
-    sessionConfig.store = MongoStore.create({
-        mongoUrl: process.env.MONGODB_URI,
-        ttl: 8 * 60 * 60 // 8 hours
-    });
+const isValidMongoUri = (uri) => {
+    return uri && typeof uri === 'string' && (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')) && !uri.includes('<username>') && !uri.includes('<password>');
+};
+
+if (isValidMongoUri(process.env.MONGODB_URI)) {
+    try {
+        const MongoStore = require("connect-mongo");
+        sessionConfig.store = MongoStore.create({
+            mongoUrl: process.env.MONGODB_URI,
+            ttl: 8 * 60 * 60 // 8 hours
+        });
+        console.log("✅ connect-mongo session store initialized successfully.");
+    } catch (e) {
+        console.error("⚠️ Failed to initialize connect-mongo session store, falling back to MemoryStore:", e.message);
+    }
+} else {
+    console.log("ℹ️ Using default memory session store (MemoryStore).");
 }
 app.use(session(sessionConfig));
 
@@ -39,11 +50,12 @@ const fs = require("fs");
 async function connectDB() {
     try {
         let mongoUri;
-        if (process.env.MONGODB_URI) {
+        if (isValidMongoUri(process.env.MONGODB_URI)) {
             mongoUri = process.env.MONGODB_URI;
             await mongoose.connect(mongoUri);
             console.log("✅ MongoDB (Remote Atlas) Connected Successfully");
         } else {
+            console.log("⚠️ Valid MONGODB_URI not found. Initializing Local MongoDB In-Memory Server...");
             const dbPath = path.join(__dirname, "database_data");
             if (!fs.existsSync(dbPath)) fs.mkdirSync(dbPath, { recursive: true });
 
