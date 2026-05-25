@@ -6,6 +6,9 @@ const session = require("express-session");
 
 const app = express();
 
+// Trust proxy for secure cookies behind reverse proxy (Render)
+app.set("trust proxy", 1);
+
 // Middleware
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
