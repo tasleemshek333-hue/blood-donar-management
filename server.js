@@ -26,9 +26,15 @@ const sessionConfig = {
 
 const sanitizeMongoUri = (uri) => {
     if (uri && typeof uri === 'string') {
-        // Fix the typo where 'm' was typed instead of '@' before 'giftlife'
-        if (uri.includes('Tasleem1997mgiftlife')) {
-            return uri.replace('Tasleem1997mgiftlife', 'Tasleem1997@giftlife');
+        uri = uri.trim();
+        // Look for the specific cluster host domain
+        const hostIndex = uri.indexOf('giftlife.csi8bls.mongodb.net');
+        if (hostIndex !== -1) {
+            const charBeforeHost = uri.charAt(hostIndex - 1);
+            if (charBeforeHost !== '@') {
+                // Replace whatever character is there (e.g. 'm') with '@'
+                uri = uri.substring(0, hostIndex - 1) + '@' + uri.substring(hostIndex);
+            }
         }
     }
     return uri;
@@ -39,7 +45,7 @@ if (process.env.MONGODB_URI) {
 }
 
 const isValidMongoUri = (uri) => {
-    return uri && typeof uri === 'string' && (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')) && !uri.includes('<username>') && !uri.includes('<password>');
+    return uri && typeof uri === 'string' && (uri.startsWith('mongodb://') || uri.startsWith('mongodb+srv://')) && uri.includes('@') && !uri.includes('<username>') && !uri.includes('<password>');
 };
 
 if (isValidMongoUri(process.env.MONGODB_URI)) {
